@@ -1,0 +1,5 @@
+/Backend/API/src/main/resources/application.properties
+
+**/.gradle/
+**/.idea/
+**/build/
