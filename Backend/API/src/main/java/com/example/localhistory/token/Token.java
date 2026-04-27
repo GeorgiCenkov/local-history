@@ -28,6 +28,7 @@ public class Token {
 
     private LocalDateTime revokedAt;
 
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -50,10 +51,11 @@ public class Token {
 
     }
 
-    public Token(User user, String refreshToken, LocalDateTime expirationDate) {
+    public Token(User user, String jwtToken, String refreshToken, LocalDateTime expirationDate) {
         this.user = user;
         this.refreshToken = refreshToken;
         this.expirationDate = expirationDate;
+        this.jwtToken = jwtToken;
     }
     public Integer getId() {
         return id;
@@ -85,5 +87,25 @@ public class Token {
 
     public String getJwtToken() {
         return jwtToken;
+    }
+
+    public void setRevoked(boolean revoked) {
+        isRevoked = revoked;
+    }
+
+    public void setRevokedAt(LocalDateTime revokedAt) {
+        this.revokedAt = revokedAt;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
+
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }
