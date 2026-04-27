@@ -4,10 +4,19 @@ import com.example.localhistory.coordinates.Coordinates;
 import com.example.localhistory.user.model.Student;
 import com.example.localhistory.user.model.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "landmark_visits")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LandmarkVisit {
 
     @Id
@@ -35,42 +44,5 @@ public class LandmarkVisit {
     @PrePersist
     private void onCreate() {
         this.dateVisited = LocalDateTime.now();
-    }
-
-    protected LandmarkVisit() {
-
-    }
-
-    public LandmarkVisit(Long id, Student user, Landmark landmark, LocalDateTime dateVisited, String image, Coordinates coordinates) {
-        this.id = id;
-        this.user = user;
-        this.landmark = landmark;
-        this.dateVisited = dateVisited;
-        this.image = image;
-        this.coordinates = coordinates;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public LocalDateTime getDateVisited() {
-        return dateVisited;
-    }
-
-    public Landmark getLandmark() {
-        return landmark;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

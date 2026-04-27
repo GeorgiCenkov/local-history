@@ -2,8 +2,11 @@ package com.example.localhistory.user.dto.request;
 
 import com.example.localhistory.user.model.Role;
 import jakarta.validation.constraints.*;
+import lombok.Data;
+
 import java.time.LocalDate;
 
+@Data
 public class UserCreateRequest {
 
     @NotBlank(message = "First name is required")
@@ -28,39 +31,4 @@ public class UserCreateRequest {
 
     @NotNull(message = "Role is required")
     private Role role;
-
-    public UserCreateRequest() {}
-
-    public UserCreateRequest(String firstName, String lastName, String email, String password, LocalDate birthDate, Role role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.birthDate = birthDate;
-        this.role = role;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public Role getRole() {
-        return role;
-    }
 }

@@ -7,16 +7,14 @@ import com.example.localhistory.token.TokenRepository;
 import com.example.localhistory.token.dto.response.TokenDTO;
 import com.example.localhistory.user.UserRepository;
 import com.example.localhistory.user.model.User;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class TokenService {
@@ -36,7 +34,7 @@ public class TokenService {
     }
 
     // Only called internally so we can assume userId is valid
-    public TokenDTO createTokenAsync(Long userId) {
+    public TokenDTO createToken(Long userId) {
 
         // Generate tokens
         String accessToken = jwtService.generateAccessToken(userId.toString());

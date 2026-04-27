@@ -27,22 +27,27 @@ public class JwtService {
         return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
 
-    private String buildToken(String username, long expiration, String type) {
+    private String buildToken(String username, long expiration) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("type", type) // critical
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String generateRefreshToken() {
+        byte[] randomBytes = new byte[64];
+        new java.security.SecureRandom().nextBytes(randomBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
     public String generateAccessToken(String username) {
-        return buildToken(username, accessExpiration, "access");
+        return buildToken(username, accessExpiration);
     }
 
     public String generateRefreshToken(String username) {
-        return buildToken(username, refreshExpiration, "refresh");
+        return generateRefreshToken();
     }
 
     public String extractUsername(String token) {
@@ -62,7 +67,16 @@ public class JwtService {
     }
 
     public boolean isValid(String token, String username) {
-        return extractUsername(token).equals(username);
+        try {
+            return extractUsername(token).equals(username)
+                    && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isTokenExpired(String token) {
+        return getClaims(token).getExpiration().before(new Date());
     }
 
     private Claims getClaims(String token) {

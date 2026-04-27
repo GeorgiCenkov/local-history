@@ -3,12 +3,21 @@ package com.example.localhistory.landmark.model;
 import com.example.localhistory.coordinates.Coordinates;
 import com.example.localhistory.quiz.Quiz;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 // Represents landmarks of interest in the game
 @Entity
+@Table(name = "landmarks")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Landmark {
 
     @Id
@@ -40,54 +49,8 @@ public class Landmark {
     @OneToOne(mappedBy = "landmark")
     private Quiz quiz;
 
-    protected Landmark() {
-
-    }
-
-    public Landmark(Long id, String title, String description, LocalDateTime dateCreated, String imageUrl, Coordinates coordinates, Integer visitRewardPoints) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.dateCreated = dateCreated;
-        this.imageUrl = imageUrl;
-        this.coordinates = coordinates;
-        this.visitRewardPoints = visitRewardPoints;
-    }
-
     @PrePersist
     private void onCreate() {
         this.dateCreated = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public Integer getVisitRewardPoints() {
-        return visitRewardPoints;
-    }
-
-    public List<LandmarkVisit> getVisits() {
-        return visits;
     }
 }

@@ -2,18 +2,23 @@ package com.example.localhistory.token;
 
 import com.example.localhistory.user.model.User;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 // Store JWT refresh tokens for users
 @Entity
+@Table(name = "tokens")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Token {
     @Id
     @GeneratedValue
     private Integer id;
 
     // the refresh token stored in db
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String refreshToken;
 
     @Column(nullable = false)
@@ -36,76 +41,21 @@ public class Token {
     @Transient
     private String jwtToken;
 
+    public Token(User user, String accessToken, String refreshToken, LocalDateTime expirationDate) {
+        this.refreshToken = refreshToken;
+        this.expirationDate = expirationDate;
+        this.user = user;
+        this.jwtToken = accessToken;
+    }
+
     @Transient
     public boolean isExpired() {
-        return this.expirationDate.isAfter(LocalDateTime.now());
+        return this.expirationDate.isBefore(LocalDateTime.now());
     }
 
     @PrePersist
     private void onCreate() {
         this.isRevoked = false;
         this.createdAt = LocalDateTime.now();
-    }
-
-    public Token() {
-
-    }
-
-    public Token(User user, String jwtToken, String refreshToken, LocalDateTime expirationDate) {
-        this.user = user;
-        this.refreshToken = refreshToken;
-        this.expirationDate = expirationDate;
-        this.jwtToken = jwtToken;
-    }
-    public Integer getId() {
-        return id;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public LocalDateTime getExpirationDate() {
-        return expirationDate;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public boolean isRevoked() {
-        return isRevoked;
-    }
-
-    public LocalDateTime getRevokedAt() {
-        return revokedAt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getJwtToken() {
-        return jwtToken;
-    }
-
-    public void setRevoked(boolean revoked) {
-        isRevoked = revoked;
-    }
-
-    public void setRevokedAt(LocalDateTime revokedAt) {
-        this.revokedAt = revokedAt;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public void setJwtToken(String jwtToken) {
-        this.jwtToken = jwtToken;
-    }
-
-    public void setExpirationDate(LocalDateTime expirationDate) {
-        this.expirationDate = expirationDate;
     }
 }
