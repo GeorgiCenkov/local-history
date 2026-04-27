@@ -1,13 +1,15 @@
-package com.example.localhistory.user;
+package com.example.localhistory.user.model;
 
-import com.example.localhistory.landmarkvisit.LandmarkVisit;
+import com.example.localhistory.token.Token;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-public class User {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
+public abstract class User {
 
     @Id
     @GeneratedValue
@@ -26,14 +28,16 @@ public class User {
     private String passwordHash;
 
     @Column(nullable = false)
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<LandmarkVisit> visits;
+    // A user can have a lot of tokens - active, expired, or revoked
+    // Multiple active tokens are used for enabling multi-device login
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
     protected User() {}
 
-    public User(String firstName, String lastName, String email, String passwordHash, LocalDateTime birthDate) {
+    public User(String firstName, String lastName, String email, String passwordHash, LocalDate birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -61,7 +65,7 @@ public class User {
         return passwordHash;
     }
 
-    public LocalDateTime getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 }

@@ -1,8 +1,8 @@
-package com.example.localhistory.landmarkvisit;
+package com.example.localhistory.landmark.model;
 
 import com.example.localhistory.coordinates.Coordinates;
-import com.example.localhistory.landmark.Landmark;
-import com.example.localhistory.user.User;
+import com.example.localhistory.user.model.Student;
+import com.example.localhistory.user.model.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public class LandmarkVisit {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
-    private User user; // the user who visited the landmark
+    private Student user; // the user who visited the landmark
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "landmark_id")
@@ -41,7 +41,7 @@ public class LandmarkVisit {
 
     }
 
-    public LandmarkVisit(Long id, User user, Landmark landmark, LocalDateTime dateVisited, String image, Coordinates coordinates) {
+    public LandmarkVisit(Long id, Student user, Landmark landmark, LocalDateTime dateVisited, String image, Coordinates coordinates) {
         this.id = id;
         this.user = user;
         this.landmark = landmark;

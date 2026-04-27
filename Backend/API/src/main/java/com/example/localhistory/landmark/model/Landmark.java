@@ -1,7 +1,6 @@
-package com.example.localhistory.landmark;
+package com.example.localhistory.landmark.model;
 
 import com.example.localhistory.coordinates.Coordinates;
-import com.example.localhistory.landmarkvisit.LandmarkVisit;
 import com.example.localhistory.quiz.Quiz;
 import jakarta.persistence.*;
 
@@ -35,7 +34,7 @@ public class Landmark {
     @Column(nullable = false)
     private Integer visitRewardPoints;
 
-    @OneToMany(mappedBy = "landmark", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "landmark")
     private List<LandmarkVisit> visits;
 
     @OneToOne(mappedBy = "landmark")
