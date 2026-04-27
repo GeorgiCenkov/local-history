@@ -1,4 +1,4 @@
-package com.example.localhistory.service;
+package com.example.localhistory.user;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;

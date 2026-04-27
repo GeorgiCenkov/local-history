@@ -1,19 +1,17 @@
-package com.example.localhistory.model;
+package com.example.localhistory.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.example.localhistory.landmarkvisit.LandmarkVisit;
+import jakarta.persistence.*;
 
-import java.util.Date;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class User {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false, length = 20)
     private String firstName;
@@ -28,11 +26,14 @@ public class User {
     private String passwordHash;
 
     @Column(nullable = false)
-    private Date birthDate;
+    private LocalDateTime birthDate;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<LandmarkVisit> visits;
 
     protected User() {}
 
-    public User(String firstName, String lastName, String email, String passwordHash, Date birthDate) {
+    public User(String firstName, String lastName, String email, String passwordHash, LocalDateTime birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -40,7 +41,7 @@ public class User {
         this.birthDate = birthDate;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
@@ -60,7 +61,7 @@ public class User {
         return passwordHash;
     }
 
-    public Date getBirthDate() {
+    public LocalDateTime getBirthDate() {
         return birthDate;
     }
 }

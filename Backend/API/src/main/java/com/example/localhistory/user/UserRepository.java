@@ -1,6 +1,5 @@
-package com.example.localhistory.repository;
+package com.example.localhistory.user;
 
-import com.example.localhistory.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

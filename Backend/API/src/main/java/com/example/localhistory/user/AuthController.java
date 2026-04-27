@@ -1,4 +1,4 @@
-package com.example.localhistory.controller;
+package com.example.localhistory.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.GetMapping;
