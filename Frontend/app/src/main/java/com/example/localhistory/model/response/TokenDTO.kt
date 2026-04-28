@@ -1,6 +1,6 @@
 package com.example.localhistory.model.response
 
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 data class TokenDTO(
     val id: Int,

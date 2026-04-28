@@ -1,6 +1,7 @@
 package com.example.localhistory.data.repository
 
-import com.example.localhistory.data.remote.RetrofitInstance
+import com.example.localhistory.data.datastore.AuthDataStore
+import com.example.localhistory.data.remote.AuthService
 import com.example.localhistory.model.request.LoginRequest
 import com.example.localhistory.model.response.AuthResponse
 
@@ -10,22 +11,38 @@ sealed class AuthResult<out T> {
     data class Error(val message: String) : AuthResult<Nothing>()
 }
 
-class AuthRepository {
+class AuthRepository(
+    private val api: AuthService,
+    private val authDataStore: AuthDataStore
+) {
 
     suspend fun login(email: String, password: String): AuthResult<AuthResponse> {
         return try {
-            val response = RetrofitInstance.auth.login(LoginRequest(email, password))
+            val response = api.login(LoginRequest(email, password))
 
             if (response.isSuccessful && response.body() != null) {
-                // API returned 2xx — unwrap the body and return it
-                AuthResult.Success(response.body()!!)
+
+                val data = response.body() ?: return AuthResult.Error("Empty response")
+                saveAuthData(data)
+
+                AuthResult.Success(data)
+
             } else {
-                // API returned 4xx/5xx — pull the error message
-                AuthResult.Error(response.errorBody()?.string() ?: "Login failed")
+                val message = response.errorBody()?.string()
+                AuthResult.Error(message ?: "Invalid email or password")
             }
+
         } catch (e: Exception) {
-            // network error, timeout, no internet etc.
             AuthResult.Error(e.message ?: "Network error")
         }
+    }
+
+    private suspend fun saveAuthData(response: AuthResponse) {
+        authDataStore.saveAuth(
+            access = response.token.jwtToken,
+            refresh = response.token.refreshToken,
+            userId = response.user.id,
+            userData = response.user
+        )
     }
 }

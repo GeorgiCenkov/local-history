@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
@@ -144,12 +146,12 @@ fun LoginScreen(
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator(
-                    color       = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
-                    modifier    = Modifier
-                        .height(18.dp)
-                        .padding(end = 8.dp)
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
             }
             Text(
                 stringResource(

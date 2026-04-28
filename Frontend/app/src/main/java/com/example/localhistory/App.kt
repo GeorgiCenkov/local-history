@@ -35,10 +35,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localhistory.ui.login.LoginScreen
 import com.example.localhistory.ui.login.LoginState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.ui.login.LoginViewModel
 
 @Composable
-fun App() {
+fun App(authDataStore: AuthDataStore) {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
@@ -47,7 +48,9 @@ fun App() {
     }
 
     // after onboarding is done, show login before the main app
-    var showLogin by remember { mutableStateOf(true) }
+    val accessToken by authDataStore.accessToken.collectAsStateWithLifecycle(initialValue = "LOADING")
+    if (accessToken == "LOADING") return // or show a splash screen
+    val showLogin = accessToken == null
 
     var currentScreen: Screen by remember { mutableStateOf(Screen.Home) }
 
@@ -55,6 +58,8 @@ fun App() {
     val localizedContext = remember(currentLanguage) {
         updateLocale(context, currentLanguage)
     }
+
+    val loginViewModel: LoginViewModel = viewModel()
 
     // provide the localized context to the whole tree
     CompositionLocalProvider(LocalContext provides localizedContext) {
@@ -67,13 +72,14 @@ fun App() {
                     }
                 )
             } else if (showLogin) {
-                val loginViewModel: LoginViewModel = viewModel()
                 val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
 
                 // react to state changes
                 LaunchedEffect(loginState) {
                     when (loginState) {
-                        is LoginState.Success -> showLogin = false  // navigate into the app
+                        is LoginState.Success -> {
+                            // nothing needed
+                        }
                         else -> Unit
                     }
                 }
