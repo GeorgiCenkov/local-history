@@ -6,4 +6,5 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
     <include file="db/changelog/init.xml"/>
     <include file="db/changelog/unique-refresh-token.xml"/>
+    <include file="db/changelog/nullable-student-game-data.xml"/>
 </databaseChangeLog>

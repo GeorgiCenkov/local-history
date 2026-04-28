@@ -1,6 +1,7 @@
 package com.example.localhistory.data.remote
 
 import com.example.localhistory.model.request.LoginRequest
+import com.example.localhistory.model.request.RegisterRequest
 import com.example.localhistory.model.response.AuthResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -12,6 +13,9 @@ interface AuthService {
     suspend fun login(
         @Body request: LoginRequest
     ): Response<AuthResponse>
+
+    @POST("api/auth")
+    suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
     // TODO: add more endpoints here
 }

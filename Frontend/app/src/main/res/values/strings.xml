@@ -39,4 +39,22 @@
     <string name="login_button_loading">Signing in…</string>
     <string name="login_error_empty_fields">Please fill in all fields</string>
     <string name="login_register_prompt">Don\'t have an account? Register</string>
+
+    <!-- Register screen -->
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Join Local History today</string>
+    <string name="register_first_name">First Name</string>
+    <string name="register_last_name">Last Name</string>
+    <string name="register_email">Email</string>
+    <string name="register_password">Password</string>
+    <string name="register_confirm_password">Confirm Password</string>
+    <string name="register_birth_date">Birth Date</string>
+    <string name="register_role_student">Student</string>
+    <string name="register_role_teacher">Teacher</string>
+    <string name="register_button">Create Account</string>
+    <string name="register_button_loading">Creating…</string>
+    <string name="register_back_to_login">Already have an account? Log in</string>
+    <string name="register_error_empty_fields">Please fill in all fields</string>
+    <string name="register_error_password_mismatch">Passwords do not match</string>
+    <string name="register_error_invalid_date">Date must be in YYYY-MM-DD format</string>
 </resources>

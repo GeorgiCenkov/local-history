@@ -18,11 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val isDark = isSystemInDarkTheme()
 
-            setContent {
-                val authDataStore = AuthDataStore(applicationContext)
 
-                App(authDataStore = authDataStore)
-            }
+            App()
 
             // Runs every time isDarkTheme changes to update the status bar icons
             SideEffect {

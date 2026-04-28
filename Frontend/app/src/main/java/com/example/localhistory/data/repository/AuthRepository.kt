@@ -3,7 +3,10 @@ package com.example.localhistory.data.repository
 import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.remote.AuthService
 import com.example.localhistory.model.request.LoginRequest
+import com.example.localhistory.model.request.RegisterRequest
 import com.example.localhistory.model.response.AuthResponse
+import com.example.localhistory.model.response.Role
+import kotlinx.datetime.LocalDate
 
 // sealed class gives you success/error as types instead of exceptions
 sealed class AuthResult<out T> {
@@ -32,6 +35,30 @@ class AuthRepository(
                 AuthResult.Error(message ?: "Invalid email or password")
             }
 
+        } catch (e: Exception) {
+            AuthResult.Error(e.message ?: "Network error")
+        }
+    }
+
+    suspend fun register(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String,
+        birthDate: LocalDate,
+        role: Role
+    ): AuthResult<AuthResponse> {
+        return try {
+            val response = api.register(
+                RegisterRequest(firstName, lastName, email, password, birthDate, role)
+            )
+            if (response.isSuccessful && response.body() != null) {
+                val data = response.body()!!
+                saveAuthData(data)
+                AuthResult.Success(data)
+            } else {
+                AuthResult.Error(response.errorBody()?.string() ?: "Registration failed")
+            }
         } catch (e: Exception) {
             AuthResult.Error(e.message ?: "Network error")
         }

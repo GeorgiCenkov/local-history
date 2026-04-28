@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1777409078772-1" author="gabig">
+        <dropNotNullConstraint columnDataType="int" columnName="level" tableName="users"/>
+    </changeSet>
+    <changeSet id="1777409078772-2" author="gabig">
+        <dropNotNullConstraint columnDataType="int" columnName="points" tableName="users"/>
+    </changeSet>
+    <changeSet id="1777409078772-3" author="gabig">
+        <dropNotNullConstraint columnDataType="int" columnName="points_required" tableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>

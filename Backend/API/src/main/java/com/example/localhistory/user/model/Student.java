@@ -18,21 +18,19 @@ public class Student extends User {
     private List<LandmarkVisit> visits;
 
     // Game stats ( lvl, xp, etc. )
-    @Column(nullable = false)
+    @Column  // defaults to nullable = true
     private Integer level;
 
-    @Column(nullable = false)
+    @Column
     private Integer points;
 
-    // The points required to level up
-    @Column(nullable = false)
+    @Column
     private Integer pointsRequired;
 
     @PrePersist
-    private void onCreate(){
+    private void onCreate() {
         this.level = 1;
         this.points = 0;
         this.pointsRequired = 100;
     }
-
 }

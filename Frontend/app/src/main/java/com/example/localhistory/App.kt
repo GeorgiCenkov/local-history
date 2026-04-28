@@ -1,132 +1,62 @@
 package com.example.localhistory
 
 import android.content.Context
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import com.example.localhistory.navigation.Screen
-import com.example.localhistory.ui.home.HomeScreen
-import com.example.localhistory.ui.profile.ProfileScreen
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import com.example.localhistory.ui.components.BottomNavBar
-import com.example.localhistory.ui.components.screens
-import com.example.localhistory.ui.discover.DiscoverScreen
-import com.example.localhistory.ui.homework.HomeworkScreen
+import androidx.core.content.edit
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.localhistory.navigation.Screen
+import com.example.localhistory.ui.login.LoginScreen
 import com.example.localhistory.ui.onboarding.OnboardingScreen
+import com.example.localhistory.ui.register.RegisterScreen
 import com.example.localhistory.ui.theme.LocalHistoryTheme
 import com.example.localhistory.utils.currentLanguage
 import com.example.localhistory.utils.updateLocale
-import androidx.core.content.edit
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.localhistory.ui.login.LoginScreen
-import com.example.localhistory.ui.login.LoginState
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.localhistory.data.datastore.AuthDataStore
-import com.example.localhistory.ui.login.LoginViewModel
+
 
 @Composable
-fun App(authDataStore: AuthDataStore) {
+fun App() {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val appViewModel: AppViewModel = viewModel()
 
     var showOnboarding by remember {
         mutableStateOf(prefs.getBoolean("show_onboarding", true))
     }
 
-    // after onboarding is done, show login before the main app
-    val accessToken by authDataStore.accessToken.collectAsStateWithLifecycle(initialValue = "LOADING")
-    if (accessToken == "LOADING") return // or show a splash screen
-    val showLogin = accessToken == null
+    val accessToken by appViewModel.accessToken.collectAsStateWithLifecycle()
+    if (accessToken == "LOADING") return
 
+    val showLogin = accessToken == null
     var currentScreen: Screen by remember { mutableStateOf(Screen.Home) }
 
-    // rebuild context whenever language changes
+    var showRegister by remember { mutableStateOf(false) }
+
     val localizedContext = remember(currentLanguage) {
         updateLocale(context, currentLanguage)
     }
 
-    val loginViewModel: LoginViewModel = viewModel()
-
-    // provide the localized context to the whole tree
     CompositionLocalProvider(LocalContext provides localizedContext) {
         LocalHistoryTheme {
-            if (showOnboarding) {
-                OnboardingScreen(
+            when {
+                showOnboarding -> OnboardingScreen(
                     onFinished = {
                         prefs.edit { putBoolean("show_onboarding", false) }
                         showOnboarding = false
                     }
                 )
-            } else if (showLogin) {
-                val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
-
-                // react to state changes
-                LaunchedEffect(loginState) {
-                    when (loginState) {
-                        is LoginState.Success -> {
-                            // nothing needed
-                        }
-                        else -> Unit
-                    }
-                }
-
-                LoginScreen(
-                    onLoginClick = { email, password ->
-                        loginViewModel.login(email, password)  // screen just reports, VM does the work
-                    },
-                    onRegisterClick = {
-                        // TODO: navigate to register screen
-                    }
+                showRegister -> RegisterScreen(
+                    onRegisterSuccess = { showRegister = false },  // token saved, DataStore triggers navigation
+                    onBackToLogin = { showRegister = false }
                 )
-            } else {
-                Scaffold(
-                    bottomBar = {
-                        BottomNavBar(
-                            currentScreen = currentScreen,
-                            onScreenSelected = { currentScreen = it }
-                        )
-                    }
-                ) { padding ->
-                    AnimatedContent( // smooth animations between screens
-                        targetState = currentScreen,
-                        transitionSpec = {
-                            // slide direction based on position in the nav order
-                            val targetIndex = screens.indexOf(targetState)
-                            val initialIndex = screens.indexOf(initialState)
-                            val goingForward = targetIndex > initialIndex
-
-                            fadeIn(tween(300)) + slideInHorizontally(
-                                initialOffsetX = { if (goingForward) it else -it },
-                                animationSpec = tween(300)
-                            ) togetherWith fadeOut(tween(200)) + slideOutHorizontally(
-                                targetOffsetX = { if (goingForward) -it else it },
-                                animationSpec = tween(300)
-                            )
-                        },
-                        modifier = Modifier.padding(padding)
-                    ) { screen ->
-                        when (screen) { // redirect to the correct screen
-                            Screen.Home -> HomeScreen()
-                            Screen.Discover -> DiscoverScreen()
-                            Screen.Homework -> HomeworkScreen()
-                            Screen.Profile -> ProfileScreen()
-                        }
-                    }
-                }
+                showLogin -> LoginScreen(onRegisterClick = { showRegister = true })
+                else -> MainScreen(currentScreen) { currentScreen = it }
             }
         }
     }
