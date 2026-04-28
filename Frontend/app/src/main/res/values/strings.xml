@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Local History</string>
+
+    <!-- Nav labels -->
+    <string name="nav_home">Home</string>
+    <string name="nav_discover">Discover</string>
+    <string name="nav_homework">Homework</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home screen -->
+    <string name="home_title">🏠 Home</string>
+    <string name="home_subtitle">Welcome to the home screen</string>
+    <string name="language_toggle">Switch to Bulgarian</string>
+</resources>

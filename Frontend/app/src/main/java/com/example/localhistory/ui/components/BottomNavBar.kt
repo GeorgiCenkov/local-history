@@ -1,0 +1,66 @@
+package com.example.localhistory.ui.components
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.example.localhistory.navigation.Screen
+
+val screens = listOf(
+    Screen.Home,
+    Screen.Discover,
+    Screen.Homework,
+    Screen.Profile
+)
+
+// filled = selected state, outlined = unselected state
+data class ScreenIcon(
+    val filled: ImageVector,
+    val outlined: ImageVector
+)
+
+val screenIcons = mapOf(
+    Screen.Home     to ScreenIcon(Icons.Filled.Home,   Icons.Outlined.Home),
+    Screen.Discover to ScreenIcon(Icons.Filled.Search, Icons.Outlined.Search),
+    Screen.Homework to ScreenIcon(Icons.Filled.School, Icons.Outlined.School),
+    Screen.Profile  to ScreenIcon(Icons.Filled.Person, Icons.Outlined.Person),
+)
+
+@Composable
+fun BottomNavBar(
+    currentScreen: Screen,
+    onScreenSelected: (Screen) -> Unit
+) {
+    NavigationBar {
+        screens.forEach { screen ->
+            val icon = screenIcons[screen]
+            val isSelected = currentScreen == screen
+
+            NavigationBarItem(
+                selected = currentScreen == screen,
+                onClick  = { onScreenSelected(screen) },
+                icon     = {
+                    icon?.let {
+                        Icon(
+                            imageVector        = if (isSelected) it.filled else it.outlined,
+                            contentDescription = stringResource(screen.labelRes)
+                        )
+                    }
+                },
+                label    = { Text(stringResource(screen.labelRes)) }
+            )
+        }
+    }
+}

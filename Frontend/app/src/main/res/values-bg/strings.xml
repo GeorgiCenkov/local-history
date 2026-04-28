@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Local History</string>
+
+    <!-- Nav labels -->
+    <string name="nav_home">Начало</string>
+    <string name="nav_discover">Открий</string>
+    <string name="nav_homework">Домашно</string>
+    <string name="nav_profile">Профил</string>
+
+    <!-- Home screen -->
+    <string name="home_title">🏠 Начало</string>
+    <string name="home_subtitle">Добре дошли в началния екран</string>
+    <string name="language_toggle">Превключи на английски</string>
+</resources>
