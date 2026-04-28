@@ -22,8 +22,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -44,6 +43,16 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("androidx.compose.foundation:foundation:1.7.8")
     implementation("androidx.graphics:graphics-shapes:1.0.1")
+
+    // HTTP client
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+
+    // converts JSON ↔ Kotlin data classes automatically
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // logging — lets you see requests/responses in Logcat during dev
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

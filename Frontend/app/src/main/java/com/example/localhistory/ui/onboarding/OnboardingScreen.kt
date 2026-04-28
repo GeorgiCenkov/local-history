@@ -23,7 +23,6 @@ import androidx.compose.material.icons.outlined.School
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,8 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.ui.components.LanguageToggle
-import com.example.localhistory.ui.components.ThemeToggle
-import com.example.localhistory.ui.theme.isDarkTheme
 import kotlinx.coroutines.launch
 
 data class OnboardingPage(

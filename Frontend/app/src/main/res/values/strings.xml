@@ -27,4 +27,16 @@
 
     <string name="onboarding_title_4">Real World Homework</string>
     <string name="onboarding_subtitle_4">Teachers can assign field trips as homework. Visit the location, complete the quiz, and submit your proof.</string>
+
+    <!-- Login  -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_show_password">Show password</string>
+    <string name="login_hide_password">Hide password</string>
+    <string name="login_button">Sign in</string>
+    <string name="login_button_loading">Signing in…</string>
+    <string name="login_error_empty_fields">Please fill in all fields</string>
+    <string name="login_register_prompt">Don\'t have an account? Register</string>
 </resources>
