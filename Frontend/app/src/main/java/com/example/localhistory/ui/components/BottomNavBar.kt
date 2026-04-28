@@ -1,14 +1,14 @@
 package com.example.localhistory.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.School
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -33,7 +33,7 @@ data class ScreenIcon(
 
 val screenIcons = mapOf(
     Screen.Home     to ScreenIcon(Icons.Filled.Home,   Icons.Outlined.Home),
-    Screen.Discover to ScreenIcon(Icons.Filled.Search, Icons.Outlined.Search),
+    Screen.Discover to ScreenIcon(Icons.Filled.Explore, Icons.Outlined.Explore),
     Screen.Homework to ScreenIcon(Icons.Filled.School, Icons.Outlined.School),
     Screen.Profile  to ScreenIcon(Icons.Filled.Person, Icons.Outlined.Person),
 )
@@ -52,6 +52,7 @@ fun BottomNavBar(
                 selected = currentScreen == screen,
                 onClick  = { onScreenSelected(screen) },
                 icon     = {
+                    // toggle between filled and outlined icons based on selection state
                     icon?.let {
                         Icon(
                             imageVector        = if (isSelected) it.filled else it.outlined,

@@ -42,6 +42,8 @@ android {
 dependencies {
     implementation("org.jetbrains.compose.animation:animation:1.8.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation("androidx.compose.foundation:foundation:1.7.8")
+    implementation("androidx.graphics:graphics-shapes:1.0.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

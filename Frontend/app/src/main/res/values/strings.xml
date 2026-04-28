@@ -10,5 +10,21 @@
     <!-- Home screen -->
     <string name="home_title">🏠 Home</string>
     <string name="home_subtitle">Welcome to the home screen</string>
-    <string name="language_toggle">Switch to Bulgarian</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+
+    <string name="onboarding_title_1">Explore Your Country</string>
+    <string name="onboarding_subtitle_1">Discover landmarks and hidden gems near you. Every place has a story waiting to be found.</string>
+
+    <string name="onboarding_title_2">Compete With Friends</string>
+    <string name="onboarding_subtitle_2">Visit landmarks and ace quizzes to earn points. Climb the leaderboard and see who knows their history best.</string>
+
+    <string name="onboarding_title_3">Learn While You Play</string>
+    <string name="onboarding_subtitle_3">Answer questions about the places you visit and turn every trip into an adventure.</string>
+
+    <string name="onboarding_title_4">Real World Homework</string>
+    <string name="onboarding_subtitle_4">Teachers can assign field trips as homework. Visit the location, complete the quiz, and submit your proof.</string>
 </resources>

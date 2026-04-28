@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.localhistory.ui.components.ThemeToggle
 import com.example.localhistory.ui.theme.isDarkTheme
 
 @Composable
@@ -18,10 +19,7 @@ fun HomeworkScreen() {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Switch(
-                checked         = isDarkTheme,
-                onCheckedChange = { isDarkTheme = it }
-            )
+            ThemeToggle()
             Text("Welcome to the home screen", style = MaterialTheme.typography.bodyMedium)
         }
     }

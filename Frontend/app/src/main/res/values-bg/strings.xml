@@ -11,5 +11,21 @@
     <!-- Home screen -->
     <string name="home_title">🏠 Начало</string>
     <string name="home_subtitle">Добре дошли в началния екран</string>
-    <string name="language_toggle">Превключи на английски</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Пропусни</string>
+    <string name="onboarding_next">Напред</string>
+    <string name="onboarding_get_started">Започни</string>
+
+    <string name="onboarding_title_1">Открий страната си</string>
+    <string name="onboarding_subtitle_1">Намери забележителности и скрити места наблизо. Всяко място крие своя история.</string>
+
+    <string name="onboarding_title_2">Състезавай се с приятели</string>
+    <string name="onboarding_subtitle_2">Посещавай забележителности и решавай викторини, за да спечелиш точки. Изкачи се в класацията.</string>
+
+    <string name="onboarding_title_3">Учи докато играеш</string>
+    <string name="onboarding_subtitle_3">Отговаряй на въпроси за местата, които посещаваш, и превърни всяко пътуване в приключение.</string>
+
+    <string name="onboarding_title_4">Домашна работа в реалния свят</string>
+    <string name="onboarding_subtitle_4">Учителите могат да задават теренни задачи. Посети мястото, реши викторината и изпрати доказателство.</string>
 </resources>
