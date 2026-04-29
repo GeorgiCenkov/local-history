@@ -48,11 +48,6 @@ fun HomeScreen() {
                 text  = stringResource(R.string.home_subtitle),
                 style = MaterialTheme.typography.bodyMedium
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Dropdown anchor
-            LanguageToggle()
         }
     }
 }

@@ -19,7 +19,6 @@ fun HomeworkScreen() {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            ThemeToggle()
             Text(stringResource(R.string.homework_subtitle), style = MaterialTheme.typography.bodyMedium)
         }
     }
