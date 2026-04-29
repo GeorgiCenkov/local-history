@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -31,65 +30,92 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.model.response.LandmarkDTO
+import com.example.localhistory.model.response.LandmarkVisitDTO
 import com.example.localhistory.ui.components.LoadingContent
 import com.example.localhistory.ui.components.NetworkImage
+import androidx.compose.foundation.lazy.items
 
 // Detailed view of a single landmark
 @Composable
-fun LandmarkDetailContent(
-    state: TeacherLandmarksUiState,
+fun LandmarkDetailScreen(
     landmark: LandmarkDTO,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    onRefreshVisits: () -> Unit
+    modifier: Modifier = Modifier,
+    visits: List<LandmarkVisitDTO> = emptyList(),
+    isVisitsLoading: Boolean = false,
+    errorMessage: String? = null,
+    onEdit: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
+    onRefreshVisits: (() -> Unit)? = null
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.Companion
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        item { LandmarkError(state) }
+        if (errorMessage != null) {
+            item {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
 
         item {
             ElevatedCard(
                 colors = CardDefaults.elevatedCardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                 ),
-                modifier = Modifier.Companion.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
                     NetworkImage(
                         imageUrl = landmark.imageUrl,
                         contentDescription = landmark.title,
-                        modifier = Modifier.Companion
+                        modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(16f / 9f)
                     )
-                    Column(Modifier.Companion.padding(16.dp)) {
+
+                    Column(Modifier.padding(16.dp)) {
                         Text(
                             text = landmark.title,
                             style = MaterialTheme.typography.headlineSmall
                         )
-                        Spacer(Modifier.Companion.height(8.dp))
+
+                        Spacer(Modifier.height(8.dp))
+
                         Text(
                             text = landmark.description,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(Modifier.Companion.height(14.dp))
+
+                        Spacer(Modifier.height(14.dp))
+
                         LandmarkStats(landmark)
-                        Spacer(Modifier.Companion.height(14.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            FilledTonalButton(onClick = onEdit) {
-                                Icon(Icons.Outlined.Edit, contentDescription = null)
-                                Spacer(Modifier.Companion.width(8.dp))
-                                Text(stringResource(R.string.action_edit))
-                            }
-                            TextButton(onClick = onDelete) {
-                                Icon(Icons.Outlined.Delete, contentDescription = null)
-                                Spacer(Modifier.Companion.width(8.dp))
-                                Text(stringResource(R.string.action_delete))
+
+                        if (onEdit != null || onDelete != null) {
+                            Spacer(Modifier.height(14.dp))
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                if (onEdit != null) {
+                                    FilledTonalButton(onClick = onEdit) {
+                                        Icon(Icons.Outlined.Edit, contentDescription = null)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(stringResource(R.string.action_edit))
+                                    }
+                                }
+
+                                if (onDelete != null) {
+                                    TextButton(onClick = onDelete) {
+                                        Icon(Icons.Outlined.Delete, contentDescription = null)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(stringResource(R.string.action_delete))
+                                    }
+                                }
                             }
                         }
                     }
@@ -99,44 +125,49 @@ fun LandmarkDetailContent(
 
         item {
             Row(
-                modifier = Modifier.Companion.fillMaxWidth(),
-                verticalAlignment = Alignment.Companion.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.Companion.weight(1f)) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.landmark_visits_title),
                         style = MaterialTheme.typography.titleLarge
                     )
+
                     Text(
-                        text = stringResource(R.string.landmark_visits_subtitle, state.visits.size),
+                        text = stringResource(R.string.landmark_visits_subtitle, visits.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                IconButton(onClick = onRefreshVisits) {
-                    Icon(
-                        Icons.Outlined.Refresh,
-                        contentDescription = stringResource(R.string.action_refresh)
-                    )
+
+                if (onRefreshVisits != null) {
+                    IconButton(onClick = onRefreshVisits) {
+                        Icon(
+                            Icons.Outlined.Refresh,
+                            contentDescription = stringResource(R.string.action_refresh)
+                        )
+                    }
                 }
             }
         }
 
         when {
-            state.isVisitsLoading && state.visits.isEmpty() -> item {
-                LoadingContent(
-                    Modifier.Companion.height(
-                        160.dp
-                    )
-                )
+            isVisitsLoading && visits.isEmpty() -> item {
+                LoadingContent(Modifier.height(160.dp))
             }
 
-            state.visits.isEmpty() -> item { EmptyVisits() }
-            else -> items(state.visits, key = { it.id }) { visit ->
+            visits.isEmpty() -> item {
+                EmptyVisits()
+            }
+
+            else -> items(visits, key = { it.id }) { visit ->
                 VisitCard(visit = visit)
             }
         }
 
-        item { Spacer(Modifier.Companion.height(12.dp)) }
+        item {
+            Spacer(Modifier.height(12.dp))
+        }
     }
 }

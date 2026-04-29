@@ -125,4 +125,8 @@
     <!-- Дата -->
     <string name="validation_date_empty">Датата на раждане е задължителна</string>
     <string name="validation_date_invalid">Въведете валидна дата във формат ГГГГ-ММ-ДД</string>
+
+    <string name="nav_landmark_detail">Детайли за забележителност</string>
+    <string name="nav_landmark_edit">Редактиране на забележителност</string>
+    <string name="nav_landmark_create">Създаване на забележителност</string>
 </resources>

@@ -128,4 +128,8 @@
     <!-- Date -->
     <string name="validation_date_empty">Date of birth is required</string>
     <string name="validation_date_invalid">Enter a valid date in YYYY-MM-DD format</string>
+
+    <string name="nav_landmark_detail">Landmark details</string>
+    <string name="nav_landmark_edit">Edit landmark</string>
+    <string name="nav_landmark_create">Create landmark</string>
 </resources>

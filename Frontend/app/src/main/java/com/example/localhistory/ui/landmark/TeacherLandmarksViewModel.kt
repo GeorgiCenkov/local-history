@@ -212,6 +212,44 @@ class TeacherLandmarksViewModel @Inject constructor(
         }
     }
 
+    fun openLandmarkById(id: Long) {
+        _state.update {
+            it.copy(
+                selectedLandmark = null,
+                visits = emptyList(),
+                isDetailLoading = true,
+                isVisitsLoading = true,
+                errorMessage = null,
+                errorMessageRes = null
+            )
+        }
+
+        viewModelScope.launch {
+            when (val result = repository.getLandmarkById(id)) {
+                is LandmarkResult.Success -> {
+                    _state.update {
+                        it.copy(
+                            selectedLandmark = result.data,
+                            isDetailLoading = false
+                        )
+                    }
+
+                    loadVisits(id)
+                }
+
+                is LandmarkResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            isDetailLoading = false,
+                            isVisitsLoading = false,
+                            errorMessage = result.message
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun loadVisits(landmarkId: Long? = _state.value.selectedLandmark?.id) {
         val id = landmarkId ?: return
         viewModelScope.launch {

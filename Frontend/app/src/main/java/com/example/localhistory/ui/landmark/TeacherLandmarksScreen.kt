@@ -27,7 +27,11 @@ import com.example.localhistory.R
 // Main Screen for teacher to CRUD their landmarks
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeacherLandmarksScreen() {
+fun TeacherLandmarksScreen(
+    onOpenLandmark: (Long) -> Unit,
+    onEditLandmark: (Long) -> Unit,
+    onCreateLandmark: () -> Unit
+) {
     val viewModel: TeacherLandmarksViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val selectedLandmark = state.selectedLandmark
@@ -66,7 +70,7 @@ fun TeacherLandmarksScreen() {
                         )
                     }
                     if (selectedLandmark == null) {
-                        FilledTonalIconButton(onClick = viewModel::startCreating) {
+                        FilledTonalIconButton(onClick = onCreateLandmark) {
                             Icon(
                                 Icons.Outlined.Add,
                                 contentDescription = stringResource(R.string.landmark_action_add)
@@ -82,36 +86,18 @@ fun TeacherLandmarksScreen() {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Open the details screen or stay in the list view if nothing is selected
-            if (selectedLandmark == null) {
-                LandmarkListContent(
-                    state = state,
-                    onCreate = viewModel::startCreating,
-                    onOpen = viewModel::openLandmark,
-                    onEdit = viewModel::startEditing,
-                    onDelete = { viewModel.deleteLandmark(it.id) }
-                )
-            } else {
-                LandmarkDetailContent(
-                    state = state,
-                    landmark = selectedLandmark,
-                    onEdit = { viewModel.startEditing(selectedLandmark) },
-                    onDelete = { viewModel.deleteLandmark(selectedLandmark.id) },
-                    onRefreshVisits = { viewModel.loadVisits(selectedLandmark.id) }
-                )
-            }
+            LandmarkListContent(
+                state = state,
+                onCreate = onCreateLandmark,
+                onOpen = { landmark ->
+                    onOpenLandmark(landmark.id)
+                },
+                onEdit = { landmark ->
+                    onEditLandmark(landmark.id)
+                },
+                onDelete = { viewModel.deleteLandmark(it.id) }
+            )
         }
-    }
-
-    // if we are creating / editing a landmark
-    if (state.isFormOpen) {
-        LandmarkFormDialog(
-            form = state.form,
-            isSaving = state.isSaving,
-            onFormChange = viewModel::updateForm,
-            onDismiss = viewModel::dismissForm,
-            onSave = viewModel::saveLandmark
-        )
     }
 }
 

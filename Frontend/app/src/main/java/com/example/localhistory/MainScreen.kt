@@ -1,5 +1,11 @@
 package com.example.localhistory
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,6 +23,9 @@ import com.example.localhistory.ui.discover.DiscoverScreen
 import com.example.localhistory.ui.home.HomeScreen
 import com.example.localhistory.ui.homework.HomeworkScreen
 import com.example.localhistory.ui.landmark.TeacherLandmarksScreen
+import com.example.localhistory.ui.landmark.route.LandmarkCreateRoute
+import com.example.localhistory.ui.landmark.route.LandmarkDetailRoute
+import com.example.localhistory.ui.landmark.route.LandmarkEditRoute
 import com.example.localhistory.ui.profile.ProfileScreen
 
 @Composable
@@ -34,6 +43,11 @@ fun MainScreen(
         it.route == currentBackStackEntry?.destination?.route
     } ?: startDestination
 
+    val bottomRoutes = availableScreens.map { it.route }
+
+    fun routeIndex(route: String?): Int {
+        return bottomRoutes.indexOf(route)
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -43,7 +57,7 @@ fun MainScreen(
                 availableScreens = availableScreens,
                 onScreenSelected = { screen ->
                     navController.navigate(screen.route) {
-                        popUpTo(Screen.Home.route) {
+                        popUpTo(startDestination.route) {
                             saveState = true
                         }
                         launchSingleTop = true
@@ -58,7 +72,76 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = startDestination.route,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            enterTransition = {
+                val from = initialState.destination.route
+                val to = targetState.destination.route
+
+                if (from in bottomRoutes && to in bottomRoutes) {
+                    val forward = routeIndex(to) > routeIndex(from)
+
+                    slideInHorizontally(
+                        animationSpec = tween(250),
+                        initialOffsetX = { if (forward) it else -it }
+                    )
+                } else {
+                    slideInVertically(
+                        animationSpec = tween(250),
+                        initialOffsetY = { it }
+                    )
+                }
+            },
+            exitTransition = {
+                val from = initialState.destination.route
+                val to = targetState.destination.route
+
+                if (from in bottomRoutes && to in bottomRoutes) {
+                    val forward = routeIndex(to) > routeIndex(from)
+
+                    slideOutHorizontally(
+                        animationSpec = tween(250),
+                        targetOffsetX = { if (forward) -it else it }
+                    )
+                } else {
+                    fadeOut(animationSpec = tween(120))
+                }
+            },
+            popEnterTransition = {
+                val from = initialState.destination.route
+                val to = targetState.destination.route
+
+                if (from in bottomRoutes && to in bottomRoutes) {
+                    val forward = routeIndex(to) > routeIndex(from)
+
+                    slideInHorizontally(
+                        animationSpec = tween(250),
+                        initialOffsetX = { if (forward) it else -it }
+                    )
+                } else {
+                    slideInVertically(
+                        animationSpec = tween(250),
+                        initialOffsetY = { -it }
+                    )
+                }
+            },
+            popExitTransition = {
+                val from = initialState.destination.route
+                val to = targetState.destination.route
+
+                if (from in bottomRoutes && to in bottomRoutes) {
+                    val forward = routeIndex(to) > routeIndex(from)
+
+                    slideOutHorizontally(
+                        animationSpec = tween(250),
+                        targetOffsetX = { if (forward) -it else it }
+                    )
+                } else {
+                    slideOutVertically(
+                        animationSpec = tween(250),
+                        targetOffsetY = { it }
+                    )
+                }
+            }
         ) {
             composable(Screen.Home.route) {
                 HomeScreen()
@@ -73,7 +156,52 @@ fun MainScreen(
             }
 
             composable(Screen.TeacherLandmarks.route) {
-                TeacherLandmarksScreen()
+                TeacherLandmarksScreen(
+                    onOpenLandmark = { landmarkId ->
+                        navController.navigate(Screen.LandmarkDetail.createRoute(landmarkId))
+                    },
+                    onEditLandmark = { landmarkId ->
+                        navController.navigate(Screen.LandmarkEdit.createRoute(landmarkId))
+                    },
+                    onCreateLandmark = {
+                        navController.navigate(Screen.LandmarkCreate.route)
+                    }
+                )
+            }
+
+            composable(Screen.LandmarkDetail.route) { backStackEntry ->
+                val landmarkId = backStackEntry.arguments
+                    ?.getString("landmarkId")
+                    ?.toLongOrNull()
+                    ?: return@composable
+
+                LandmarkDetailRoute(
+                    landmarkId = landmarkId,
+                    onBack = { navController.popBackStack() },
+                    onEdit = {
+                        navController.navigate(Screen.LandmarkEdit.createRoute(landmarkId))
+                    }
+                )
+            }
+
+            composable(Screen.LandmarkEdit.route) { backStackEntry ->
+                val landmarkId = backStackEntry.arguments
+                    ?.getString("landmarkId")
+                    ?.toLongOrNull()
+                    ?: return@composable
+
+                LandmarkEditRoute (
+                    landmarkId = landmarkId,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.LandmarkCreate.route) {
+                LandmarkCreateRoute (
+                    onBack = { navController.popBackStack() },
+                    onCreated = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Profile.route) {
