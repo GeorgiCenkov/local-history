@@ -34,8 +34,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.localhistory.R
 
 data class LoginUiState(
@@ -63,8 +63,11 @@ private fun validatePassword(password: String): Int? = when {
 }
 
 @Composable
-fun LoginScreen(onRegisterClick: () -> Unit) {
-    val viewModel: LoginViewModel = viewModel()
+fun LoginScreen(
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit
+) {
+    val viewModel: LoginViewModel = hiltViewModel()
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
     var state by remember { mutableStateOf(LoginUiState()) }
 
@@ -89,9 +92,22 @@ fun LoginScreen(onRegisterClick: () -> Unit) {
     // Sync loading/error state from ViewModel back into UI state
     LaunchedEffect(loginState) {
         when (loginState) {
-            is LoginState.Loading -> state = state.copy(isLoading = true, errorMessage = null)
-            is LoginState.Error   -> state = state.copy(isLoading = false, errorMessage = (loginState as LoginState.Error).message)
-            is LoginState.Success -> state = state.copy(isLoading = false)
+            is LoginState.Loading -> {
+                state = state.copy(isLoading = true, errorMessage = null)
+            }
+
+            is LoginState.Error -> {
+                state = state.copy(
+                    isLoading = false,
+                    errorMessage = (loginState as LoginState.Error).message
+                )
+            }
+
+            is LoginState.Success -> {
+                state = state.copy(isLoading = false)
+                onLoginSuccess()
+            }
+
             else -> Unit
         }
     }

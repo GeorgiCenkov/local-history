@@ -20,15 +20,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.localhistory.R
 
 // Main Screen for teacher to CRUD their landmarks
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeacherLandmarksScreen() {
-    val viewModel: TeacherLandmarksViewModel = viewModel()
+    val viewModel: TeacherLandmarksViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val selectedLandmark = state.selectedLandmark
 

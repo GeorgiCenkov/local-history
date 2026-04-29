@@ -1,5 +1,6 @@
 package com.example.localhistory.ui.components
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.ui.home.languages
 import com.example.localhistory.utils.currentLanguage
@@ -26,16 +28,16 @@ import com.example.localhistory.utils.currentLanguage
 @Composable
 fun LanguageToggle() {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    // DropdownMenu MUST be inside a Box with its anchor
     Box {
         OutlinedButton(onClick = { expanded = true }) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector        = Icons.Filled.Language,
+                    imageVector = Icons.Filled.Language,
                     contentDescription = null
                 )
-                Spacer(modifier = Modifier.width(8.dp))  // ← width not height for horizontal
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = languages.find { it.code == currentLanguage }?.label ?: "Language"
                 )
@@ -43,7 +45,7 @@ fun LanguageToggle() {
         }
 
         DropdownMenu(
-            expanded         = expanded,
+            expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
             languages.forEach { language ->
@@ -51,14 +53,15 @@ fun LanguageToggle() {
                     text = { Text(language.label) },
                     onClick = {
                         expanded = false
-                        currentLanguage = language.code  // ← this alone triggers recomposition
+                        currentLanguage = language.code
+                        (context as Activity).recreate()  // ← now context is defined
                     },
                     leadingIcon = {
                         if (language.code == currentLanguage) {
                             Icon(
-                                imageVector        = Icons.Filled.Language,
+                                imageVector = Icons.Filled.Language,
                                 contentDescription = null,
-                                tint               = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
