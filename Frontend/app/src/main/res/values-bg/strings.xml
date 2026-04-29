@@ -29,33 +29,53 @@
     <string name="onboarding_title_4">Домашна работа в реалния свят</string>
     <string name="onboarding_subtitle_4">Учителите могат да задават теренни задачи. Посети мястото, реши викторината и изпрати доказателство.</string>
 
-    <!-- Login  -->
+    <!-- Login -->
     <string name="login_title">Добре дошли</string>
-    <string name="login_subtitle">Влезте в профила си</string>
+    <string name="login_subtitle">Влезте, за да продължите</string>
     <string name="login_email">Имейл</string>
     <string name="login_password">Парола</string>
     <string name="login_show_password">Покажи паролата</string>
     <string name="login_hide_password">Скрий паролата</string>
     <string name="login_button">Вход</string>
     <string name="login_button_loading">Влизане…</string>
+    <string name="login_register_prompt">Нямате акаунт? Регистрирайте се</string>
     <string name="login_error_empty_fields">Моля, попълнете всички полета</string>
-    <string name="login_register_prompt">Нямате профил? Регистрирайте се</string>
 
-    <!-- Екран за регистрация -->
-    <string name="register_title">Създай акаунт</string>
-    <string name="register_subtitle">Присъедини се към Local History</string>
-    <string name="register_first_name">Име</string>
+    <!-- Register -->
+    <string name="register_title">Създайте акаунт</string>
+    <string name="register_subtitle">Присъединете се към общността за местна история</string>
+    <string name="register_first_name">Собствено име</string>
     <string name="register_last_name">Фамилия</string>
     <string name="register_email">Имейл</string>
-    <string name="register_password">Парола</string>
-    <string name="register_confirm_password">Потвърди паролата</string>
     <string name="register_birth_date">Дата на раждане</string>
-    <string name="register_role_student">Ученик</string>
-    <string name="register_role_teacher">Учител</string>
+    <string name="register_password">Парола</string>
+    <string name="register_confirm_password">Потвърдете паролата</string>
     <string name="register_button">Създай акаунт</string>
-    <string name="register_button_loading">Създава се…</string>
-    <string name="register_back_to_login">Вече имаш акаунт? Влез</string>
-    <string name="register_error_empty_fields">Моля, попълни всички полета</string>
+    <string name="register_button_loading">Създаване на акаунт…</string>
+    <string name="register_back_to_login">Вече имате акаунт? Влезте</string>
+    <string name="register_error_empty_fields">Моля, попълнете всички полета</string>
     <string name="register_error_password_mismatch">Паролите не съвпадат</string>
     <string name="register_error_invalid_date">Датата трябва да е във формат ГГГГ-ММ-ДД</string>
+    <string name="register_role_student">Ученик</string>
+    <string name="register_role_teacher">Учител</string>
+
+    <!-- Auth validation -->
+
+    <!-- Имена -->
+    <string name="validation_name_empty">Това поле е задължително</string>
+
+    <!-- Имейл -->
+    <string name="validation_email_empty">Имейлът е задължителен</string>
+    <string name="validation_email_invalid">Въведете валиден имейл адрес</string>
+
+    <!-- Парола -->
+    <string name="validation_password_empty">Паролата е задължителна</string>
+    <string name="validation_password_too_short">Паролата трябва да е поне 8 символа</string>
+    <string name="validation_password_no_uppercase">Паролата трябва да съдържа поне една главна буква</string>
+    <string name="validation_password_no_digit">Паролата трябва да съдържа поне една цифра</string>
+    <string name="validation_password_mismatch">Паролите не съвпадат</string>
+
+    <!-- Дата -->
+    <string name="validation_date_empty">Датата на раждане е задължителна</string>
+    <string name="validation_date_invalid">Въведете валидна дата във формат ГГГГ-ММ-ДД</string>
 </resources>

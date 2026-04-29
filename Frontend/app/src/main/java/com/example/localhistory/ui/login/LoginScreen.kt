@@ -43,26 +43,58 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val showPassword: Boolean = false
+    val showPassword: Boolean = false,
+    // per-field validation errors; null means no error shown yet
+    val emailError: String? = null,
+    val passwordError: String? = null
 )
 
+/** Returns null if valid, else a resource string key describing the problem. */
+private fun validateEmail(email: String): Int? = when {
+    email.isBlank() -> R.string.validation_email_empty
+    !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> R.string.validation_email_invalid
+    else -> null
+}
+
+private fun validatePassword(password: String): Int? = when {
+    password.isBlank() -> R.string.validation_password_empty
+    password.length < 8 -> R.string.validation_password_too_short
+    else -> null
+}
+
 @Composable
-fun LoginScreen(onRegisterClick: () -> Unit ) {
+fun LoginScreen(onRegisterClick: () -> Unit) {
     val viewModel: LoginViewModel = viewModel()
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
     var state by remember { mutableStateOf(LoginUiState()) }
 
-    // sync loading/error state from ViewModel back into UI state
+    // Resolve validation strings up-front (must be inside @Composable scope)
+    val emailEmptyError     = stringResource(R.string.validation_email_empty)
+    val emailInvalidError   = stringResource(R.string.validation_email_invalid)
+    val passwordEmptyError  = stringResource(R.string.validation_password_empty)
+    val passwordShortError  = stringResource(R.string.validation_password_too_short)
+
+    fun resolveEmailError(email: String): String? = when (validateEmail(email)) {
+        R.string.validation_email_empty   -> emailEmptyError
+        R.string.validation_email_invalid -> emailInvalidError
+        else -> null
+    }
+
+    fun resolvePasswordError(password: String): String? = when (validatePassword(password)) {
+        R.string.validation_password_empty     -> passwordEmptyError
+        R.string.validation_password_too_short -> passwordShortError
+        else -> null
+    }
+
+    // Sync loading/error state from ViewModel back into UI state
     LaunchedEffect(loginState) {
         when (loginState) {
             is LoginState.Loading -> state = state.copy(isLoading = true, errorMessage = null)
-            is LoginState.Error -> state = state.copy(isLoading = false, errorMessage = (loginState as LoginState.Error).message)
+            is LoginState.Error   -> state = state.copy(isLoading = false, errorMessage = (loginState as LoginState.Error).message)
             is LoginState.Success -> state = state.copy(isLoading = false)
             else -> Unit
         }
     }
-
-    val errorEmptyFields = stringResource(R.string.login_error_empty_fields)
 
     Column(
         modifier = Modifier
@@ -73,58 +105,93 @@ fun LoginScreen(onRegisterClick: () -> Unit ) {
     ) {
         Text(text = stringResource(R.string.login_title), style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = stringResource(R.string.login_subtitle), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+        Text(
+            text = stringResource(R.string.login_subtitle),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
         Spacer(modifier = Modifier.height(32.dp))
 
+        // ── Email ────────────────────────────────────────────────────────────
         OutlinedTextField(
             value = state.email,
-            onValueChange = { state = state.copy(email = it) },
+            onValueChange = {
+                // Clear field error while the user is typing; re-validate on focus-loss
+                // is handled implicitly when they press the login button.
+                state = state.copy(email = it, emailError = null)
+            },
             label = { Text(stringResource(R.string.login_email)) },
             singleLine = true,
+            isError = state.emailError != null,
+            supportingText = state.emailError?.let { msg ->
+                { Text(msg, color = MaterialTheme.colorScheme.error) }
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // ── Password ─────────────────────────────────────────────────────────
         OutlinedTextField(
             value = state.password,
-            onValueChange = { state = state.copy(password = it) },
+            onValueChange = { state = state.copy(password = it, passwordError = null) },
             label = { Text(stringResource(R.string.login_password)) },
             singleLine = true,
+            isError = state.passwordError != null,
+            supportingText = state.passwordError?.let { msg ->
+                { Text(msg, color = MaterialTheme.colorScheme.error) }
+            },
             visualTransformation = if (state.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
                 IconButton(onClick = { state = state.copy(showPassword = !state.showPassword) }) {
                     Icon(
                         imageVector = if (state.showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = stringResource(if (state.showPassword) R.string.login_hide_password else R.string.login_show_password)
+                        contentDescription = stringResource(
+                            if (state.showPassword) R.string.login_hide_password else R.string.login_show_password
+                        )
                     )
                 }
             },
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Global error (e.g. wrong credentials from server)
         if (state.errorMessage != null) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = state.errorMessage!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = state.errorMessage!!,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                if (state.email.isBlank() || state.password.isBlank()) {
-                    state = state.copy(errorMessage = errorEmptyFields)
+                // Validate all fields; collect errors before early-returning so every
+                // field shows its error at the same time rather than one-by-one.
+                val emailErr    = resolveEmailError(state.email)
+                val passwordErr = resolvePasswordError(state.password)
+
+                if (emailErr != null || passwordErr != null) {
+                    state = state.copy(emailError = emailErr, passwordError = passwordErr)
                     return@Button
                 }
+
                 viewModel.login(state.email, state.password)
             },
             enabled = !state.isLoading,
             modifier = Modifier.fillMaxWidth()
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
                 Spacer(modifier = Modifier.width(8.dp))
             }
             Text(stringResource(if (state.isLoading) R.string.login_button_loading else R.string.login_button))

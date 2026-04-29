@@ -28,7 +28,9 @@
     <string name="onboarding_title_4">Real World Homework</string>
     <string name="onboarding_subtitle_4">Teachers can assign field trips as homework. Visit the location, complete the quiz, and submit your proof.</string>
 
-    <!-- Login  -->
+    <!-- ════════════════════════════════════════════════
+        Login screen
+        ════════════════════════════════════════════════ -->
     <string name="login_title">Welcome back</string>
     <string name="login_subtitle">Sign in to continue</string>
     <string name="login_email">Email</string>
@@ -37,24 +39,46 @@
     <string name="login_hide_password">Hide password</string>
     <string name="login_button">Sign in</string>
     <string name="login_button_loading">Signing in…</string>
-    <string name="login_error_empty_fields">Please fill in all fields</string>
     <string name="login_register_prompt">Don\'t have an account? Register</string>
+    <!-- kept for backwards-compat; prefer per-field errors below -->
+    <string name="login_error_empty_fields">Please fill in all fields</string>
 
     <!-- Register screen -->
-    <string name="register_title">Create Account</string>
-    <string name="register_subtitle">Join Local History today</string>
-    <string name="register_first_name">First Name</string>
-    <string name="register_last_name">Last Name</string>
+    <string name="register_title">Create account</string>
+    <string name="register_subtitle">Join the local history community</string>
+    <string name="register_first_name">First name</string>
+    <string name="register_last_name">Last name</string>
     <string name="register_email">Email</string>
+    <string name="register_birth_date">Date of birth</string>
     <string name="register_password">Password</string>
-    <string name="register_confirm_password">Confirm Password</string>
-    <string name="register_birth_date">Birth Date</string>
+    <string name="register_confirm_password">Confirm password</string>
+    <string name="register_button">Create account</string>
+    <string name="register_button_loading">Creating account…</string>
     <string name="register_role_student">Student</string>
     <string name="register_role_teacher">Teacher</string>
-    <string name="register_button">Create Account</string>
-    <string name="register_button_loading">Creating…</string>
-    <string name="register_back_to_login">Already have an account? Log in</string>
+    <string name="register_back_to_login">Already have an account? Sign in</string>
+    <!-- kept for backwards-compat -->
     <string name="register_error_empty_fields">Please fill in all fields</string>
     <string name="register_error_password_mismatch">Passwords do not match</string>
     <string name="register_error_invalid_date">Date must be in YYYY-MM-DD format</string>
+
+    <!-- Shared validation messages -->
+
+    <!-- Name -->
+    <string name="validation_name_empty">This field is required</string>
+
+    <!-- Email -->
+    <string name="validation_email_empty">Email is required</string>
+    <string name="validation_email_invalid">Enter a valid email address</string>
+
+    <!-- Password -->
+    <string name="validation_password_empty">Password is required</string>
+    <string name="validation_password_too_short">Password must be at least 8 characters</string>
+    <string name="validation_password_no_uppercase">Password must contain at least one uppercase letter</string>
+    <string name="validation_password_no_digit">Password must contain at least one number</string>
+    <string name="validation_password_mismatch">Passwords do not match</string>
+
+    <!-- Date -->
+    <string name="validation_date_empty">Date of birth is required</string>
+    <string name="validation_date_invalid">Enter a valid date in YYYY-MM-DD format</string>
 </resources>
