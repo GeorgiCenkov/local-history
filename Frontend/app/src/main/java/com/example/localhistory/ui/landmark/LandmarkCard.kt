@@ -31,13 +31,15 @@ import com.example.localhistory.R
 import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.ui.components.NetworkImage
 
-// The main view landmark card, used in a list view
+// Shared landmark list card used by both teachers and students.
+// Teacher lists can show management actions, while student lists use the same layout as a read-only entry.
 @Composable
 fun LandmarkCard(
     landmark: LandmarkDTO,
     onOpen: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onEdit: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
+    showOpenAction: Boolean = true
 ) {
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors(
@@ -85,24 +87,34 @@ fun LandmarkCard(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            Column(horizontalAlignment = Alignment.Companion.End) {
-                IconButton(onClick = onOpen) {
-                    Icon(
-                        Icons.Outlined.Visibility,
-                        contentDescription = stringResource(R.string.action_view)
-                    )
-                }
-                IconButton(onClick = onEdit) {
-                    Icon(
-                        Icons.Outlined.Edit,
-                        contentDescription = stringResource(R.string.action_edit)
-                    )
-                }
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        Icons.Outlined.Delete,
-                        contentDescription = stringResource(R.string.action_delete)
-                    )
+
+            // If this is a teacher opening it, show crud icons
+            if (showOpenAction || onEdit != null || onDelete != null) {
+                Column(horizontalAlignment = Alignment.Companion.End) {
+                    if (showOpenAction) {
+                        IconButton(onClick = onOpen) {
+                            Icon(
+                                Icons.Outlined.Visibility,
+                                contentDescription = stringResource(R.string.action_view)
+                            )
+                        }
+                    }
+                    if (onEdit != null) {
+                        IconButton(onClick = onEdit) {
+                            Icon(
+                                Icons.Outlined.Edit,
+                                contentDescription = stringResource(R.string.action_edit)
+                            )
+                        }
+                    }
+                    if (onDelete != null) {
+                        IconButton(onClick = onDelete) {
+                            Icon(
+                                Icons.Outlined.Delete,
+                                contentDescription = stringResource(R.string.action_delete)
+                            )
+                        }
+                    }
                 }
             }
         }

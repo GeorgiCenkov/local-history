@@ -54,7 +54,9 @@
     <string name="home_title">🏠 Home</string>
     <string name="home_subtitle">Welcome to the home screen</string>
     <string name="discover_title">Discover Landmarks</string>
-    <string name="discover_subtitle">Find places with stories worth exploring.</string>
+    <string name="discover_subtitle">%1$d places with stories worth exploring</string>
+    <string name="discover_empty_title">No landmarks available</string>
+    <string name="discover_empty_body">Check back later for places to explore.</string>
     <string name="homework_subtitle">Manage your learning tasks and app preferences.</string>
     <string name="date_placeholder">YYYY-MM-DD</string>
 

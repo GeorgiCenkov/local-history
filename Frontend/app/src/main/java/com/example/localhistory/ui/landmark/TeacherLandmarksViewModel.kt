@@ -57,7 +57,7 @@ class TeacherLandmarksViewModel @Inject constructor(
     fun loadLandmarks() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
-            when (val result = repository.getLandmarks()) {
+            when (val result = repository.getTeacherLandmarks()) {
                 is LandmarkResult.Success -> _state.update {
                     it.copy(landmarks = result.data, isLoading = false)
                 }

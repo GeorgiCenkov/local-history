@@ -26,8 +26,17 @@ public class LandmarkService {
 
     /** Returns every landmark; read-only transaction avoids unnecessary locking. */
     @Transactional(readOnly = true)
-    public List<LandmarkDTO> getAllLandmarks(String teacherEmail) {
+    public List<LandmarkDTO> getAllTeacherLandmarks(String teacherEmail) {
         return landmarkRepository.findByOwnerEmail(teacherEmail)
+                .stream()
+                .map(mapper::toDTO)
+                .toList();
+    }
+
+    /** Returns every landmark; read-only transaction avoids unnecessary locking. */
+    @Transactional(readOnly = true)
+    public List<LandmarkDTO> getAllLandmarks() {
+        return landmarkRepository.findAll()
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
@@ -35,8 +44,8 @@ public class LandmarkService {
 
     /** Fetches a single landmark by ID, throwing 404 if it doesn't exist. */
     @Transactional(readOnly = true)
-    public LandmarkDTO getLandmarkById(String teacherEmail, Long id) {
-        return mapper.toDTO(findLandmarkForTeacherOrThrow(teacherEmail, id));
+    public LandmarkDTO getLandmarkById(Long id) {
+        return mapper.toDTO(findLandmarkOrThrow(id));
     }
 
     /** Persists a brand-new landmark built from the validated request body. */
@@ -67,9 +76,9 @@ public class LandmarkService {
 
     /** Returns all visits recorded against a specific landmark. */
     @Transactional(readOnly = true)
-    public List<LandmarkVisitDTO> getVisitsForLandmark(String teacherEmail, Long landmarkId) {
-        findLandmarkForTeacherOrThrow(teacherEmail, landmarkId);
-        return landmarkVisitRepository.findByLandmarkIdAndLandmarkOwnerEmail(landmarkId, teacherEmail)
+    public List<LandmarkVisitDTO> getVisitsForLandmark(Long landmarkId) {
+        findLandmarkOrThrow(landmarkId);
+        return landmarkVisitRepository.findByLandmarkId(landmarkId)
                 .stream()
                 .map(mapper::toVisitDTO)
                 .toList();
@@ -77,8 +86,8 @@ public class LandmarkService {
 
     /** Fetches a single visit record, throwing 404 if not found. */
     @Transactional(readOnly = true)
-    public LandmarkVisitDTO getVisitById(String teacherEmail, Long visitId) {
-        LandmarkVisit visit = landmarkVisitRepository.findByIdAndLandmarkOwnerEmail(visitId, teacherEmail)
+    public LandmarkVisitDTO getVisitById(Long visitId) {
+        LandmarkVisit visit = landmarkVisitRepository.findById(visitId)
                 .orElseThrow(() -> new EntityNotFoundException("Landmark visit not found with id: " + visitId));
         return mapper.toVisitDTO(visit);
     }
@@ -105,6 +114,12 @@ public class LandmarkService {
     /** Centralizes the "find or 404" pattern used across several methods. */
     private Landmark findLandmarkForTeacherOrThrow(String teacherEmail, Long id) {
         return landmarkRepository.findByIdAndOwnerEmail(id, teacherEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + id));
+    }
+
+    /** Centralizes the "find or 404" pattern used across several methods. */
+    private Landmark findLandmarkOrThrow(Long id) {
+        return landmarkRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + id));
     }
 

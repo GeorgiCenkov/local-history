@@ -14,8 +14,19 @@ class LandmarkRepository(
     private val api: LandmarkService
 ) {
 
-    suspend fun getLandmarks(): LandmarkResult<List<LandmarkDTO>> = runCatching {
-        val response = api.getLandmarks()
+    suspend fun getTeacherLandmarks(): LandmarkResult<List<LandmarkDTO>> = runCatching {
+        val response = api.getTeacherLandmarks()
+        if (response.isSuccessful) {
+            LandmarkResult.Success(response.body().orEmpty())
+        } else {
+            LandmarkResult.Error(response.errorBody()?.string() ?: "Could not load landmarks")
+        }
+    }.getOrElse {
+        LandmarkResult.Error(it.message ?: "Network error")
+    }
+
+    suspend fun getAllLandmarks(): LandmarkResult<List<LandmarkDTO>> = runCatching {
+        val response = api.getAllLandmarks()
         if (response.isSuccessful) {
             LandmarkResult.Success(response.body().orEmpty())
         } else {

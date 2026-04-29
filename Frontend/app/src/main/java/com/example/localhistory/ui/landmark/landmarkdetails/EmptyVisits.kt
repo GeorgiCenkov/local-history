@@ -1,4 +1,4 @@
-package com.example.localhistory.ui.landmark
+package com.example.localhistory.ui.landmark.landmarkdetails
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

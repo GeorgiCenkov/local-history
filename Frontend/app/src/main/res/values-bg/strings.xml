@@ -55,7 +55,9 @@
     <string name="home_title">🏠 Начало</string>
     <string name="home_subtitle">Добре дошли в началния екран</string>
     <string name="discover_title">Открий забележителности</string>
-    <string name="discover_subtitle">Намерете места с истории, които си заслужава да изследвате.</string>
+    <string name="discover_subtitle">%1$d места с истории, които си заслужава да изследвате</string>
+    <string name="discover_empty_title">Няма налични забележителности</string>
+    <string name="discover_empty_body">Проверете отново по-късно за места за изследване.</string>
     <string name="homework_subtitle">Управлявайте учебните си задачи и настройките на приложението.</string>
     <string name="date_placeholder">ГГГГ-ММ-ДД</string>
 

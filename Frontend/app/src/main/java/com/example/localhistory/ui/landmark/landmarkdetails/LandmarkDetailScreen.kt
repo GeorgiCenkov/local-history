@@ -1,4 +1,4 @@
-package com.example.localhistory.ui.landmark
+package com.example.localhistory.ui.landmark.landmarkdetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

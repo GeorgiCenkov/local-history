@@ -13,8 +13,11 @@ import retrofit2.http.Path
 
 interface LandmarkService {
 
+    @GET("api/landmarks/teacher")
+    suspend fun getTeacherLandmarks(): Response<List<LandmarkDTO>>
+
     @GET("api/landmarks")
-    suspend fun getLandmarks(): Response<List<LandmarkDTO>>
+    suspend fun getAllLandmarks(): Response<List<LandmarkDTO>>
 
     @GET("api/landmarks/{id}")
     suspend fun getLandmarkById(

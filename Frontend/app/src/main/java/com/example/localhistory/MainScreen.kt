@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.localhistory.model.response.Role
 import com.example.localhistory.model.response.UserDTO
 import com.example.localhistory.navigation.Screen
 import com.example.localhistory.ui.components.BottomNavBar
@@ -23,8 +24,8 @@ import com.example.localhistory.ui.discover.DiscoverScreen
 import com.example.localhistory.ui.home.HomeScreen
 import com.example.localhistory.ui.homework.HomeworkScreen
 import com.example.localhistory.ui.landmark.TeacherLandmarksScreen
+import com.example.localhistory.ui.landmark.landmarkdetails.LandmarkDetailRoute
 import com.example.localhistory.ui.landmark.route.LandmarkCreateRoute
-import com.example.localhistory.ui.landmark.route.LandmarkDetailRoute
 import com.example.localhistory.ui.landmark.route.LandmarkEditRoute
 import com.example.localhistory.ui.profile.ProfileScreen
 
@@ -148,7 +149,11 @@ fun MainScreen(
             }
 
             composable(Screen.Discover.route) {
-                DiscoverScreen()
+                DiscoverScreen(
+                    onOpenLandmark = { landmarkId ->
+                        navController.navigate(Screen.LandmarkDetail.createRoute(landmarkId))
+                    }
+                )
             }
 
             composable(Screen.Homework.route) {
@@ -178,8 +183,12 @@ fun MainScreen(
                 LandmarkDetailRoute(
                     landmarkId = landmarkId,
                     onBack = { navController.popBackStack() },
-                    onEdit = {
-                        navController.navigate(Screen.LandmarkEdit.createRoute(landmarkId))
+                    onEdit = if (user.role == Role.TEACHER) {
+                        {
+                            navController.navigate(Screen.LandmarkEdit.createRoute(landmarkId))
+                        }
+                    } else {
+                        null
                     }
                 )
             }
