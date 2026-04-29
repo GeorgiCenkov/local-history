@@ -3,10 +3,12 @@ package com.example.localhistory
 import android.content.Context
 import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.remote.AuthService
+import com.example.localhistory.data.remote.LandmarkService
 import com.example.localhistory.data.remote.adapter.LocalDateAdapter
 import com.example.localhistory.data.remote.adapter.LocalDateTimeAdapter
 import com.example.localhistory.data.remote.interceptor.AuthInterceptor
 import com.example.localhistory.data.repository.AuthRepository
+import com.example.localhistory.data.repository.LandmarkRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -25,6 +27,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    private const val API_BASE_URL = "http://192.168.100.5:8080/"
 
     @Provides
     @Singleton
@@ -40,19 +43,19 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authDataStore: AuthDataStore): OkHttpClient =
+    fun provideOkHttpClient(authDataStore: AuthDataStore, gson: Gson): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
-            .addInterceptor(AuthInterceptor(authDataStore))  // your auth interceptor
+            .addInterceptor(AuthInterceptor(authDataStore, gson, API_BASE_URL))
             .build()
 
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient, gson: Gson): Retrofit =
         Retrofit.Builder()
-            .baseUrl("http://192.168.100.5:8080/")
+            .baseUrl(API_BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
@@ -64,8 +67,18 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideLandmarkService(retrofit: Retrofit): LandmarkService =
+        retrofit.create(LandmarkService::class.java)
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
         api: AuthService,
         authDataStore: AuthDataStore
     ): AuthRepository = AuthRepository(api, authDataStore)
+
+    @Provides
+    @Singleton
+    fun provideLandmarkRepository(api: LandmarkService): LandmarkRepository =
+        LandmarkRepository(api)
 }

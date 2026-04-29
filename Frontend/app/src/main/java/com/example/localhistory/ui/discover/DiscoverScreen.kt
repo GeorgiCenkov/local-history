@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.localhistory.R
 
 @Composable
 fun DiscoverScreen() {
@@ -16,8 +18,8 @@ fun DiscoverScreen() {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("🏠 Discover Landamrks", style = MaterialTheme.typography.headlineMedium)
-            Text("Welcome to the home screen", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.discover_title), style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.discover_subtitle), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

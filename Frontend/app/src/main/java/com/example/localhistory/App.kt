@@ -3,6 +3,7 @@ package com.example.localhistory
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,7 +12,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.edit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.localhistory.model.response.Role
 import com.example.localhistory.navigation.Screen
+import com.example.localhistory.ui.components.screens
+import com.example.localhistory.ui.components.teacherScreens
 import com.example.localhistory.ui.login.LoginScreen
 import com.example.localhistory.ui.onboarding.OnboardingScreen
 import com.example.localhistory.ui.register.RegisterScreen
@@ -30,10 +34,11 @@ fun App() {
         mutableStateOf(prefs.getBoolean("show_onboarding", true))
     }
 
-    val accessToken by appViewModel.accessToken.collectAsStateWithLifecycle()
-    if (accessToken == "LOADING") return
+    val authSession by appViewModel.authSession.collectAsStateWithLifecycle()
+    if (authSession == null) return
 
-    val showLogin = accessToken == null
+    val user = authSession?.user
+    val showLogin = authSession?.accessToken == null
     var currentScreen: Screen by remember { mutableStateOf(Screen.Home) }
 
     var showRegister by remember { mutableStateOf(false) }
@@ -44,6 +49,21 @@ fun App() {
 
     CompositionLocalProvider(LocalContext provides localizedContext) {
         LocalHistoryTheme {
+            val availableScreens = if (user?.role == Role.TEACHER) teacherScreens else screens
+            val visibleScreen = currentScreen.takeIf { it in availableScreens } ?: availableScreens.first()
+
+            LaunchedEffect(showLogin, user?.role) {
+                if (!showLogin && currentScreen !in availableScreens) {
+                    currentScreen = availableScreens.first()
+                }
+            }
+
+            LaunchedEffect(showLogin, user) {
+                if (!showLogin && user == null) {
+                    appViewModel.logout()
+                }
+            }
+
             when {
                 showOnboarding -> OnboardingScreen(
                     onFinished = {
@@ -56,7 +76,13 @@ fun App() {
                     onBackToLogin = { showRegister = false }
                 )
                 showLogin -> LoginScreen(onRegisterClick = { showRegister = true })
-                else -> MainScreen(currentScreen) { currentScreen = it }
+                user == null -> Unit
+                else -> MainScreen(
+                    currentScreen = visibleScreen,
+                    availableScreens = availableScreens,
+                    user = user,
+                    onLogout = appViewModel::logout
+                ) { currentScreen = it }
             }
         }
     }

@@ -3,10 +3,12 @@ package com.example.localhistory.ui.components
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.School
 import androidx.compose.material3.Icon
@@ -25,6 +27,11 @@ val screens = listOf(
     Screen.Profile
 )
 
+val teacherScreens = listOf(
+    Screen.TeacherLandmarks,
+    Screen.Profile
+)
+
 // filled = selected state, outlined = unselected state
 data class ScreenIcon(
     val filled: ImageVector,
@@ -35,16 +42,18 @@ val screenIcons = mapOf(
     Screen.Home     to ScreenIcon(Icons.Filled.Home,   Icons.Outlined.Home),
     Screen.Discover to ScreenIcon(Icons.Filled.Explore, Icons.Outlined.Explore),
     Screen.Homework to ScreenIcon(Icons.Filled.School, Icons.Outlined.School),
+    Screen.TeacherLandmarks to ScreenIcon(Icons.Filled.Map, Icons.Outlined.Map),
     Screen.Profile  to ScreenIcon(Icons.Filled.Person, Icons.Outlined.Person),
 )
 
 @Composable
 fun BottomNavBar(
     currentScreen: Screen,
+    availableScreens: List<Screen> = screens,
     onScreenSelected: (Screen) -> Unit
 ) {
     NavigationBar {
-        screens.forEach { screen ->
+        availableScreens.forEach { screen ->
             val icon = screenIcons[screen]
             val isSelected = currentScreen == screen
 

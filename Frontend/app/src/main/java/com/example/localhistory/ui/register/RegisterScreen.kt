@@ -211,7 +211,7 @@ fun RegisterScreen(
             value = state.birthDate,
             onValueChange = { state = state.copy(birthDate = it, birthDateError = null) },
             label = { Text(stringResource(R.string.register_birth_date)) },
-            placeholder = { Text("YYYY-MM-DD") },
+            placeholder = { Text(stringResource(R.string.date_placeholder)) },
             singleLine = true,
             isError = state.birthDateError != null,
             supportingText = state.birthDateError?.let { msg -> { Text(msg, color = MaterialTheme.colorScheme.error) } },

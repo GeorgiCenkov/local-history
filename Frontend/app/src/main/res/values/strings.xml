@@ -5,11 +5,58 @@
     <string name="nav_home">Home</string>
     <string name="nav_discover">Discover</string>
     <string name="nav_homework">Homework</string>
+    <string name="nav_landmarks">Landmarks</string>
     <string name="nav_profile">Profile</string>
+
+    <!-- Shared actions -->
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_save">Save</string>
+    <string name="action_view">View</string>
+    <string name="common_unknown">Unknown</string>
+
+    <!-- Profile -->
+    <string name="profile_email">Email</string>
+    <string name="profile_birth_date">Date of birth</string>
+    <string name="profile_user_id">User ID</string>
+    <string name="profile_sign_out">Sign out</string>
+
+    <!-- Teacher landmarks -->
+    <string name="landmarks_title">My landmarks</string>
+    <string name="landmarks_subtitle">%1$d landmarks managed by you</string>
+    <string name="landmarks_empty_title">No landmarks yet</string>
+    <string name="landmarks_empty_body">Create your first landmark so students can discover it.</string>
+    <string name="landmark_action_add">Add landmark</string>
+    <string name="landmark_card_stats">%1$d points · %2$d visits</string>
+    <string name="landmark_reward_points">%1$d points</string>
+    <string name="landmark_visit_count">%1$d visits</string>
+    <string name="landmark_coordinates">Lat %1$.5f, Lng %2$.5f</string>
+    <string name="landmark_visits_title">Visits</string>
+    <string name="landmark_visits_subtitle">%1$d submitted visits</string>
+    <string name="landmark_visits_empty">No students have submitted visits for this landmark yet.</string>
+    <string name="landmark_visit_user">Student #%1$d</string>
+    <string name="landmark_visit_date">Visited %1$s</string>
+    <string name="landmark_visit_image">Visit image</string>
+    <string name="landmark_form_add_title">Add landmark</string>
+    <string name="landmark_form_edit_title">Edit landmark</string>
+    <string name="landmark_field_title">Title</string>
+    <string name="landmark_field_description">Description</string>
+    <string name="landmark_field_image_url">Image URL</string>
+    <string name="landmark_field_latitude">Latitude</string>
+    <string name="landmark_field_longitude">Longitude</string>
+    <string name="landmark_field_reward_points">Reward points</string>
+    <string name="landmark_error_invalid_form">Fill every field with valid values before saving.</string>
 
     <!-- Home screen -->
     <string name="home_title">🏠 Home</string>
     <string name="home_subtitle">Welcome to the home screen</string>
+    <string name="discover_title">Discover Landmarks</string>
+    <string name="discover_subtitle">Find places with stories worth exploring.</string>
+    <string name="homework_subtitle">Manage your learning tasks and app preferences.</string>
+    <string name="date_placeholder">YYYY-MM-DD</string>
 
     <!-- Onboarding -->
     <string name="onboarding_skip">Skip</string>

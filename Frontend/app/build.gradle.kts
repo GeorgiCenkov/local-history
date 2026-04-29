@@ -46,6 +46,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("androidx.compose.foundation:foundation:1.7.8")
     implementation("androidx.graphics:graphics-shapes:1.0.1")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt:coil-svg:2.7.0")
 
     // HTTP client
     implementation("com.squareup.retrofit2:retrofit:2.11.0")

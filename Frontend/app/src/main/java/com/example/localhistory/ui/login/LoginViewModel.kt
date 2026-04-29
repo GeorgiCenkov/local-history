@@ -2,7 +2,6 @@ package com.example.localhistory.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.repository.AuthRepository
 import com.example.localhistory.data.repository.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,8 +21,7 @@ sealed class LoginState {
 //TODO: Add better validation and error handling
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: AuthRepository,
-    private val authDataStore: AuthDataStore
+    private val repository: AuthRepository
 ) : ViewModel() {
 
     // StateFlow — the screen observes this and recomposes when it changes
@@ -37,14 +35,6 @@ class LoginViewModel @Inject constructor(
 
             when (val result = repository.login(email, password)) {
                 is AuthResult.Success -> {
-                    // save result.data.token to DataStore
-                    authDataStore.saveAuth(
-                        access = result.data.token.jwtToken,
-                        refresh = result.data.token.refreshToken,
-                        userId = result.data.user.id,
-                        userData = result.data.user
-                    )
-
                     _loginState.value = LoginState.Success(result.data.token.jwtToken)
                 }
 

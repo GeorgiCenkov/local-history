@@ -26,7 +26,7 @@ class AuthRepository(
             if (response.isSuccessful && response.body() != null) {
 
                 val data = response.body() ?: return AuthResult.Error("Empty response")
-                saveAuthData(data)
+                authDataStore.saveAuth(data)
 
                 AuthResult.Success(data)
 
@@ -54,7 +54,7 @@ class AuthRepository(
             )
             if (response.isSuccessful && response.body() != null) {
                 val data = response.body()!!
-                saveAuthData(data)
+                authDataStore.saveAuth(data)
                 AuthResult.Success(data)
             } else {
                 AuthResult.Error(response.errorBody()?.string() ?: "Registration failed")
@@ -64,12 +64,4 @@ class AuthRepository(
         }
     }
 
-    private suspend fun saveAuthData(response: AuthResponse) {
-        authDataStore.saveAuth(
-            access = response.token.jwtToken,
-            refresh = response.token.refreshToken,
-            userId = response.user.id,
-            userData = response.user
-        )
-    }
 }
