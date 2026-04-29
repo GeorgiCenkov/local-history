@@ -1,5 +1,7 @@
 package com.example.localhistory.security.config;
 
+import com.example.localhistory.exception.AccessDeniedHandlerImpl;
+import com.example.localhistory.exception.AuthEntryPoint;
 import com.example.localhistory.security.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +18,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+    private final AuthEntryPoint authEntryPoint;
+    private final AccessDeniedHandlerImpl accessDeniedHandler;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter,
+                          AuthEntryPoint authEntryPoint,
+                          AccessDeniedHandlerImpl accessDeniedHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.authEntryPoint = authEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -38,14 +46,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((req, res, e) -> {
-                            System.out.println("ENTRY POINT TRIGGERED");
-                            res.sendError(401);
-                        })
-                        .accessDeniedHandler((req, res, e) -> {
-                            System.out.println("ACCESS DENIED TRIGGERED");
-                            res.sendError(403);
-                        })
+                        .authenticationEntryPoint(authEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

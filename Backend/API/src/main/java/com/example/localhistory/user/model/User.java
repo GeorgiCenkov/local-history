@@ -43,4 +43,11 @@
         // Multiple active tokens are used for enabling multi-device login
         @OneToMany(mappedBy = "user")
         private List<Token> tokens;
+
+        // Not mapped helper method
+        public Role getRole() {
+            if (this instanceof Teacher) return Role.TEACHER;
+            if (this instanceof Student) return Role.STUDENT;
+            throw new IllegalStateException("Unknown user type: " + this.getClass().getSimpleName());
+        }
     }

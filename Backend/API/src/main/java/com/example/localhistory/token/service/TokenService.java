@@ -6,6 +6,7 @@ import com.example.localhistory.token.TokenMapper;
 import com.example.localhistory.token.TokenRepository;
 import com.example.localhistory.token.dto.response.TokenDTO;
 import com.example.localhistory.user.UserRepository;
+import com.example.localhistory.user.model.Role;
 import com.example.localhistory.user.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -34,11 +35,11 @@ public class TokenService {
     }
 
     // Only called internally so we can assume userId is valid
-    public TokenDTO createToken(Long userId) {
+    public TokenDTO createToken(Long userId, Role userRole) {
 
         // Generate tokens
-        String accessToken = jwtService.generateAccessToken(userId.toString());
-        String refreshToken = jwtService.generateRefreshToken(userId.toString());
+        String accessToken = jwtService.generateAccessToken(userId.toString(), userRole.toString());
+        String refreshToken = jwtService.generateRefreshToken();
 
         if (refreshExpirationDays <= 0) {
             throw new IllegalArgumentException("Invalid JWT configuration: refresh-expiration-days");
@@ -98,11 +99,16 @@ public class TokenService {
         }
 
         // Generate a new refresh token for the future
-        token.setRefreshToken(jwtService.generateRefreshToken(token.getUser().getId().toString()));
+        token.setRefreshToken(jwtService.generateRefreshToken());
         token.setExpirationDate(LocalDateTime.now().plusDays(refreshExpirationDays));
 
         // access token is NOT stored, but is held in memory to be sent to frontend
-        String newAccessToken = jwtService.generateAccessToken(token.getUser().getId().toString());
+
+        String newAccessToken = jwtService.generateAccessToken(
+                token.getUser().getId().toString(),
+                token.getUser().getRole().toString()
+        );
+
         token.setJwtToken(newAccessToken); // transient
 
         tokenRepository.save(token);
