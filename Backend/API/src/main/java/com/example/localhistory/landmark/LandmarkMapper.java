@@ -12,6 +12,7 @@ public interface LandmarkMapper {
 
     // visitsCount is derived from the size of the visits collection, not a
     // direct field mapping, so we compute it in a default method instead.
+    @Mapping(source = "owner.id", target = "ownerId")
     @Mapping(target = "visitsCount", expression = "java(landmark.getVisits() != null ? landmark.getVisits().size() : 0)")
     LandmarkDTO toDTO(Landmark landmark);
 

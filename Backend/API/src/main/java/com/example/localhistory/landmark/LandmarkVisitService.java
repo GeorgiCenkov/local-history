@@ -34,15 +34,17 @@ public class LandmarkVisitService {
         visit.setImage(request.getImage());
         visit.setCoordinates(request.getCoordinates());
 
+        // Award points to user
+        student.setPoints((student.getPoints() == null ? 0 : student.getPoints()) + landmark.getVisitRewardPoints());
+
         return mapper.toVisitDTO(landmarkVisitRepository.save(visit));
     }
 
     @Transactional
-    public void deleteVisit(Long visitId) {
-        if (!landmarkVisitRepository.existsById(visitId)) {
-            throw new EntityNotFoundException("Landmark visit not found with id: " + visitId);
-        }
-        landmarkVisitRepository.deleteById(visitId);
+    public void deleteVisit(String teacherEmail, Long visitId) {
+        LandmarkVisit visit = landmarkVisitRepository.findByIdAndLandmarkOwnerEmail(visitId, teacherEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Landmark visit not found with id: " + visitId));
+        landmarkVisitRepository.delete(visit);
     }
 
     private Student findStudentOrThrow(String userEmail) {

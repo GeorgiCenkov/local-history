@@ -13,6 +13,7 @@ public class LandmarkDTO {
     private LocalDateTime dateCreated;
     private String imageUrl;
     private Coordinates coordinates;
+    private Long ownerId;
     private Integer visitRewardPoints;
     private Integer visitsCount;
 }

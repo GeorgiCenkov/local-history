@@ -7,4 +7,5 @@
     <include file="db/changelog/init.xml"/>
     <include file="db/changelog/unique-refresh-token.xml"/>
     <include file="db/changelog/nullable-student-game-data.xml"/>
+    <include file="db/changelog/landmark-owner.xml" context=""/>
 </databaseChangeLog>

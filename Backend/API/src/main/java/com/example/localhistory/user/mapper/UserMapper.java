@@ -36,5 +36,6 @@ public interface UserMapper {
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tokens", ignore = true)
+    @Mapping(target = "landmarks", ignore = true)
     Teacher toTeacher(UserCreateRequest request);
 }

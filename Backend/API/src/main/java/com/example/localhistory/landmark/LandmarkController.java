@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,16 +31,18 @@ public class LandmarkController {
      * GET /api/landmarks — list all landmarks with visit counts.
      */
     @GetMapping
-    public ResponseEntity<List<LandmarkDTO>> getAllLandmarks() {
-        return ResponseEntity.ok(landmarkService.getAllLandmarks());
+    public ResponseEntity<List<LandmarkDTO>> getAllLandmarks(Authentication authentication) {
+        return ResponseEntity.ok(landmarkService.getAllLandmarks(authentication.getName()));
     }
 
     /**
      * GET /api/landmarks/{id} — fetch a single landmark by its ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<LandmarkDTO> getLandmarkById(@PathVariable Long id) {
-        return ResponseEntity.ok(landmarkService.getLandmarkById(id));
+    public ResponseEntity<LandmarkDTO> getLandmarkById(
+            @PathVariable Long id,
+            Authentication authentication) {
+        return ResponseEntity.ok(landmarkService.getLandmarkById(authentication.getName(), id));
     }
 
     /**
@@ -47,8 +50,10 @@ public class LandmarkController {
      * Returns 201 Created with the persisted landmark in the body.
      */
     @PostMapping
-    public ResponseEntity<LandmarkDTO> createLandmark(@Valid @RequestBody LandmarkRequest request) {
-        LandmarkDTO created = landmarkService.createLandmark(request);
+    public ResponseEntity<LandmarkDTO> createLandmark(
+            @Valid @RequestBody LandmarkRequest request,
+            Authentication authentication) {
+        LandmarkDTO created = landmarkService.createLandmark(authentication.getName(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -59,8 +64,9 @@ public class LandmarkController {
     @PutMapping("/{id}")
     public ResponseEntity<LandmarkDTO> updateLandmark(
             @PathVariable Long id,
-            @Valid @RequestBody LandmarkRequest request) {
-        return ResponseEntity.ok(landmarkService.updateLandmark(id, request));
+            @Valid @RequestBody LandmarkRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(landmarkService.updateLandmark(authentication.getName(), id, request));
     }
 
     /**
@@ -68,8 +74,10 @@ public class LandmarkController {
      * Returns 204 No Content on success.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLandmark(@PathVariable Long id) {
-        landmarkService.deleteLandmark(id);
+    public ResponseEntity<Void> deleteLandmark(
+            @PathVariable Long id,
+            Authentication authentication) {
+        landmarkService.deleteLandmark(authentication.getName(), id);
         return ResponseEntity.noContent().build();
     }
 
@@ -79,16 +87,20 @@ public class LandmarkController {
      * GET /api/landmarks/{id}/visits — list all visits for a landmark.
      */
     @GetMapping("/{id}/visits")
-    public ResponseEntity<List<LandmarkVisitDTO>> getVisitsForLandmark(@PathVariable Long id) {
-        return ResponseEntity.ok(landmarkService.getVisitsForLandmark(id));
+    public ResponseEntity<List<LandmarkVisitDTO>> getVisitsForLandmark(
+            @PathVariable Long id,
+            Authentication authentication) {
+        return ResponseEntity.ok(landmarkService.getVisitsForLandmark(authentication.getName(), id));
     }
 
     /**
      * GET /api/landmarks/visits/{visitId} — fetch a single visit record.
      */
     @GetMapping("/visits/{visitId}")
-    public ResponseEntity<LandmarkVisitDTO> getVisitById(@PathVariable Long visitId) {
-        return ResponseEntity.ok(landmarkService.getVisitById(visitId));
+    public ResponseEntity<LandmarkVisitDTO> getVisitById(
+            @PathVariable Long visitId,
+            Authentication authentication) {
+        return ResponseEntity.ok(landmarkService.getVisitById(authentication.getName(), visitId));
     }
 
     /**
@@ -96,8 +108,10 @@ public class LandmarkController {
      * Useful for moderation (e.g. rejecting fraudulent proof images).
      */
     @DeleteMapping("/visits/{visitId}")
-    public ResponseEntity<Void> deleteVisit(@PathVariable Long visitId) {
-        landmarkService.deleteVisit(visitId);
+    public ResponseEntity<Void> deleteVisit(
+            @PathVariable Long visitId,
+            Authentication authentication) {
+        landmarkService.deleteVisit(authentication.getName(), visitId);
         return ResponseEntity.noContent().build();
     }
 }

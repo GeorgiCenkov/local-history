@@ -2,6 +2,7 @@ package com.example.localhistory.landmark.model;
 
 import com.example.localhistory.coordinates.Coordinates;
 import com.example.localhistory.quiz.Quiz;
+import com.example.localhistory.user.model.Teacher;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +39,10 @@ public class Landmark {
 
     @Embedded
     private Coordinates coordinates;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id")
+    private Teacher owner;
 
     // The amount of XP given to users who visit the landmark
     @Column(nullable = false)

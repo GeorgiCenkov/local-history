@@ -5,6 +5,9 @@ import com.example.localhistory.landmark.dto.response.LandmarkDTO;
 import com.example.localhistory.landmark.dto.response.LandmarkVisitDTO;
 import com.example.localhistory.landmark.model.Landmark;
 import com.example.localhistory.landmark.model.LandmarkVisit;
+import com.example.localhistory.user.UserRepository;
+import com.example.localhistory.user.model.Teacher;
+import com.example.localhistory.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +21,13 @@ public class LandmarkService {
 
     private final LandmarkRepository landmarkRepository;
     private final LandmarkVisitRepository landmarkVisitRepository;
+    private final UserRepository userRepository;
     private final LandmarkMapper mapper;
 
     /** Returns every landmark; read-only transaction avoids unnecessary locking. */
     @Transactional(readOnly = true)
-    public List<LandmarkDTO> getAllLandmarks() {
-        return landmarkRepository.findAll()
+    public List<LandmarkDTO> getAllLandmarks(String teacherEmail) {
+        return landmarkRepository.findByOwnerEmail(teacherEmail)
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
@@ -31,14 +35,15 @@ public class LandmarkService {
 
     /** Fetches a single landmark by ID, throwing 404 if it doesn't exist. */
     @Transactional(readOnly = true)
-    public LandmarkDTO getLandmarkById(Long id) {
-        return mapper.toDTO(findLandmarkOrThrow(id));
+    public LandmarkDTO getLandmarkById(String teacherEmail, Long id) {
+        return mapper.toDTO(findLandmarkForTeacherOrThrow(teacherEmail, id));
     }
 
     /** Persists a brand-new landmark built from the validated request body. */
     @Transactional
-    public LandmarkDTO createLandmark(LandmarkRequest request) {
+    public LandmarkDTO createLandmark(String teacherEmail, LandmarkRequest request) {
         Landmark landmark = new Landmark();
+        landmark.setOwner(findTeacherOrThrow(teacherEmail));
         applyRequest(landmark, request);
         return mapper.toDTO(landmarkRepository.save(landmark));
     }
@@ -48,27 +53,23 @@ public class LandmarkService {
      * Every field in the request overwrites what is currently stored.
      */
     @Transactional
-    public LandmarkDTO updateLandmark(Long id, LandmarkRequest request) {
-        Landmark landmark = findLandmarkOrThrow(id);
+    public LandmarkDTO updateLandmark(String teacherEmail, Long id, LandmarkRequest request) {
+        Landmark landmark = findLandmarkForTeacherOrThrow(teacherEmail, id);
         applyRequest(landmark, request);
         return mapper.toDTO(landmarkRepository.save(landmark));
     }
 
     /** Permanently removes a landmark. Throws 404 if the ID is unknown. */
     @Transactional
-    public void deleteLandmark(Long id) {
-        if (!landmarkRepository.existsById(id)) {
-            throw new EntityNotFoundException("Landmark not found with id: " + id);
-        }
-        landmarkRepository.deleteById(id);
+    public void deleteLandmark(String teacherEmail, Long id) {
+        landmarkRepository.delete(findLandmarkForTeacherOrThrow(teacherEmail, id));
     }
 
     /** Returns all visits recorded against a specific landmark. */
     @Transactional(readOnly = true)
-    public List<LandmarkVisitDTO> getVisitsForLandmark(Long landmarkId) {
-        // Validate the landmark exists before querying visits
-        findLandmarkOrThrow(landmarkId);
-        return landmarkVisitRepository.findByLandmarkId(landmarkId)
+    public List<LandmarkVisitDTO> getVisitsForLandmark(String teacherEmail, Long landmarkId) {
+        findLandmarkForTeacherOrThrow(teacherEmail, landmarkId);
+        return landmarkVisitRepository.findByLandmarkIdAndLandmarkOwnerEmail(landmarkId, teacherEmail)
                 .stream()
                 .map(mapper::toVisitDTO)
                 .toList();
@@ -76,19 +77,18 @@ public class LandmarkService {
 
     /** Fetches a single visit record, throwing 404 if not found. */
     @Transactional(readOnly = true)
-    public LandmarkVisitDTO getVisitById(Long visitId) {
-        LandmarkVisit visit = landmarkVisitRepository.findById(visitId)
+    public LandmarkVisitDTO getVisitById(String teacherEmail, Long visitId) {
+        LandmarkVisit visit = landmarkVisitRepository.findByIdAndLandmarkOwnerEmail(visitId, teacherEmail)
                 .orElseThrow(() -> new EntityNotFoundException("Landmark visit not found with id: " + visitId));
         return mapper.toVisitDTO(visit);
     }
 
     /** Removes a visit record — useful for moderation by teachers. */
     @Transactional
-    public void deleteVisit(Long visitId) {
-        if (!landmarkVisitRepository.existsById(visitId)) {
-            throw new EntityNotFoundException("Landmark visit not found with id: " + visitId);
-        }
-        landmarkVisitRepository.deleteById(visitId);
+    public void deleteVisit(String teacherEmail, Long visitId) {
+        LandmarkVisit visit = landmarkVisitRepository.findByIdAndLandmarkOwnerEmail(visitId, teacherEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Landmark visit not found with id: " + visitId));
+        landmarkVisitRepository.delete(visit);
     }
 
     // ── Private helpers ──────────────────────────────────────────────────────
@@ -103,9 +103,20 @@ public class LandmarkService {
     }
 
     /** Centralizes the "find or 404" pattern used across several methods. */
-    private Landmark findLandmarkOrThrow(Long id) {
-        return landmarkRepository.findById(id)
+    private Landmark findLandmarkForTeacherOrThrow(String teacherEmail, Long id) {
+        return landmarkRepository.findByIdAndOwnerEmail(id, teacherEmail)
                 .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + id));
+    }
+
+    private Teacher findTeacherOrThrow(String teacherEmail) {
+        User user = userRepository.findByEmail(teacherEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + teacherEmail));
+
+        if (user instanceof Teacher teacher) {
+            return teacher;
+        }
+
+        throw new IllegalArgumentException("Only teachers can manage landmarks");
     }
 
 }

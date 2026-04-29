@@ -33,8 +33,10 @@ public class LandmarkVisitController {
 
     @DeleteMapping("/{visitId}")
     @PreAuthorize("hasRole('TEACHER')")
-    public ResponseEntity<Void> deleteVisit(@PathVariable Long visitId) {
-        landmarkVisitService.deleteVisit(visitId);
+    public ResponseEntity<Void> deleteVisit(
+            @PathVariable Long visitId,
+            Authentication authentication) {
+        landmarkVisitService.deleteVisit(authentication.getName(), visitId);
         return ResponseEntity.noContent().build();
     }
 }
