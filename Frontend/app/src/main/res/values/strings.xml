@@ -15,6 +15,7 @@
     <string name="action_edit">Edit</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_save">Save</string>
+    <string name="action_ok">OK</string>
     <string name="action_view">View</string>
     <string name="common_unknown">Unknown</string>
 
@@ -54,6 +55,8 @@
     <string name="landmark_visit_error_location">Could not get your current location. Make sure location is enabled and try again.</string>
     <string name="landmark_visit_error_upload">Could not upload your visit photo. Please try again.</string>
     <string name="landmark_visit_error_submit">Could not submit your visit. Please try again.</string>
+    <string name="landmark_visit_error_out_of_range">You need to be within 50 meters of the landmark to mark a visit.</string>
+    <string name="landmark_visit_error_title">Visit not submitted</string>
     <string name="landmark_form_add_title">Add landmark</string>
     <string name="landmark_form_edit_title">Edit landmark</string>
     <string name="landmark_field_title">Title</string>

@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -62,7 +63,8 @@ fun LandmarkDetailScreen(
     onDelete: (() -> Unit)? = null,
     onRefreshVisits: (() -> Unit)? = null,
     onSubmitVisitPhoto: ((String) -> Unit)? = null,
-    onVisitPermissionDenied: (() -> Unit)? = null
+    onVisitPermissionDenied: (() -> Unit)? = null,
+    onDismissVisitMessage: () -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -74,10 +76,10 @@ fun LandmarkDetailScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        if (errorMessageRes != null || errorMessage != null) {
+        if (errorMessage != null) {
             item {
                 Text(
-                    text = errorMessageRes?.let { stringResource(it) } ?: errorMessage.orEmpty(),
+                    text = errorMessage,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -239,5 +241,21 @@ fun LandmarkDetailScreen(
             )
         }
     }
-}
 
+    if (errorMessageRes != null) {
+        AlertDialog(
+            onDismissRequest = onDismissVisitMessage,
+            title = {
+                Text(stringResource(R.string.landmark_visit_error_title))
+            },
+            text = {
+                Text(stringResource(errorMessageRes))
+            },
+            confirmButton = {
+                TextButton(onClick = onDismissVisitMessage) {
+                    Text(stringResource(R.string.action_ok))
+                }
+            }
+        )
+    }
+}

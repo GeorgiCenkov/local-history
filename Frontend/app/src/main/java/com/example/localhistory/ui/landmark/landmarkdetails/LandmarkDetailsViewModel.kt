@@ -149,7 +149,7 @@ class LandmarkDetailViewModel @Inject constructor(
                 is LandmarkResult.Error -> _state.update {
                     it.copy(
                         isSubmittingVisit = false,
-                        errorMessageRes = R.string.landmark_visit_error_submit
+                        errorMessageRes = submitResult.message.toVisitSubmitErrorRes()
                     )
                 }
             }
@@ -165,4 +165,22 @@ class LandmarkDetailViewModel @Inject constructor(
             )
         }
     }
+
+    fun dismissVisitMessage() {
+        _state.update {
+            it.copy(
+                errorMessage = null,
+                errorMessageRes = null,
+                successMessageRes = null
+            )
+        }
+    }
+
+    // if the error message cotnains "within 50 meters", it's the out of range error, otherwise it's a generic submit error
+    private fun String.toVisitSubmitErrorRes(): Int =
+        if (contains("within 50 meters", ignoreCase = true)) {
+            R.string.landmark_visit_error_out_of_range
+        } else {
+            R.string.landmark_visit_error_submit
+        }
 }

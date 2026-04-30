@@ -127,6 +127,7 @@ fun LandmarkDetailRoute(
                     } else {
                         null
                     },
+                    onDismissVisitMessage = viewModel::dismissVisitMessage,
                     modifier = Modifier.padding(padding)
                 )
             }

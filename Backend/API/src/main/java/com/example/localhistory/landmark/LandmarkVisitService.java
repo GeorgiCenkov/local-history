@@ -1,5 +1,6 @@
 package com.example.localhistory.landmark;
 
+import com.example.localhistory.coordinates.Coordinates;
 import com.example.localhistory.landmark.dto.request.LandmarkVisitRequest;
 import com.example.localhistory.landmark.dto.response.LandmarkVisitDTO;
 import com.example.localhistory.landmark.model.Landmark;
@@ -17,18 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LandmarkVisitService {
 
+    private static final double MAX_VISIT_DISTANCE_METERS = 50.0;
+    private static final double EARTH_RADIUS_METERS = 6_371_000.0;
+
     private final LandmarkRepository landmarkRepository;
     private final LandmarkVisitRepository landmarkVisitRepository;
     private final UserRepository userRepository;
     private final UserService userService;
     private final LandmarkMapper mapper;
 
-    //TODO: add validation that the request is coming from a place near enough
     @Transactional
     public LandmarkVisitDTO submitVisit(String userEmail, LandmarkVisitRequest request) {
         Student student = findStudentOrThrow(userEmail);
         Landmark landmark = landmarkRepository.findById(request.getLandmarkId())
                 .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + request.getLandmarkId()));
+
+        validateVisitIsNearLandmark(request.getCoordinates(), landmark.getCoordinates());
 
         LandmarkVisit visit = new LandmarkVisit();
         visit.setUser(student);
@@ -58,5 +63,31 @@ public class LandmarkVisitService {
         }
 
         throw new IllegalArgumentException("Only students can submit landmark visits");
+    }
+
+    private void validateVisitIsNearLandmark(Coordinates visitCoordinates, Coordinates landmarkCoordinates) {
+        if (visitCoordinates == null || landmarkCoordinates == null) {
+            throw new IllegalArgumentException("Visit and landmark coordinates are required");
+        }
+
+        double distanceMeters = calculateDistanceMeters(visitCoordinates, landmarkCoordinates);
+
+        if (distanceMeters > MAX_VISIT_DISTANCE_METERS) {
+            throw new IllegalArgumentException("Visit must be submitted within 50 meters of the landmark");
+        }
+    }
+
+    private double calculateDistanceMeters(Coordinates first, Coordinates second) {
+        double firstLatitude = Math.toRadians(first.getLatitude());
+        double secondLatitude = Math.toRadians(second.getLatitude());
+        double latitudeDelta = Math.toRadians(second.getLatitude() - first.getLatitude());
+        double longitudeDelta = Math.toRadians(second.getLongitude() - first.getLongitude());
+
+        double haversine = Math.sin(latitudeDelta / 2) * Math.sin(latitudeDelta / 2)
+                + Math.cos(firstLatitude) * Math.cos(secondLatitude)
+                * Math.sin(longitudeDelta / 2) * Math.sin(longitudeDelta / 2);
+        double angularDistance = 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+
+        return EARTH_RADIUS_METERS * angularDistance;
     }
 }
