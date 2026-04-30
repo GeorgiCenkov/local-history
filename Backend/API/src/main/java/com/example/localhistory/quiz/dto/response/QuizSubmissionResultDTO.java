@@ -11,5 +11,6 @@ public class QuizSubmissionResultDTO {
     private int answeredQuestions;
     private int correctAnswers;
     private int awardedPoints;
+    private boolean alreadyCompleted;
     private List<QuizQuestionResultDTO> results;
 }

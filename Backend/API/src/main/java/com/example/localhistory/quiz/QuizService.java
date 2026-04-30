@@ -31,6 +31,7 @@ import java.util.Set;
 public class QuizService {
 
     private final QuizRepository quizRepository;
+    private final QuizCompletionRepository quizCompletionRepository;
     private final LandmarkRepository landmarkRepository;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -129,10 +130,19 @@ public class QuizService {
                 .map(question -> gradeQuestion(question, answersByQuestionId.get(question.getId())))
                 .toList();
         int correctAnswers = (int) results.stream().filter(QuizQuestionResultDTO::isCorrect).count();
-        int awardedPoints = calculateQuizRewardPoints(student, correctAnswers);
 
-        if (awardedPoints > 0) {
-            userService.awardPoints(student.getId(), awardedPoints);
+        // If the user has already completed it
+        boolean alreadyCompleted = quizCompletionRepository.existsByStudentIdAndQuizId(student.getId(), quiz.getId());
+
+        int awardedPoints = alreadyCompleted ? 0 : calculateQuizRewardPoints(student, correctAnswers);
+
+        // Do not award points twice
+        if (!alreadyCompleted) {
+            saveCompletion(student, quiz, awardedPoints);
+
+            if (awardedPoints > 0) {
+                userService.awardPoints(student.getId(), awardedPoints);
+            }
         }
 
         QuizSubmissionResultDTO result = new QuizSubmissionResultDTO();
@@ -141,6 +151,7 @@ public class QuizService {
         result.setAnsweredQuestions(answersByQuestionId.size());
         result.setCorrectAnswers(correctAnswers);
         result.setAwardedPoints(awardedPoints);
+        result.setAlreadyCompleted(alreadyCompleted);
         result.setResults(results);
         return result;
     }
@@ -230,8 +241,20 @@ public class QuizService {
             return 0;
         }
 
-        int pointsPerCorrectAnswer = Math.max(1, Math.round(student.getPointsRequired() * 0.01f));
+        int pointsRequired = student.getPointsRequired() != null && student.getPointsRequired() > 0
+                ? student.getPointsRequired()
+                : 100;
+        int pointsPerCorrectAnswer = Math.max(1, (int) Math.ceil(pointsRequired * 0.01));
         return pointsPerCorrectAnswer * correctAnswers;
+    }
+
+    /** Records the first completion so later retakes cannot award more points. */
+    private void saveCompletion(Student student, Quiz quiz, int awardedPoints) {
+        QuizCompletion completion = new QuizCompletion();
+        completion.setStudent(student);
+        completion.setQuiz(quiz);
+        completion.setAwardedPoints(awardedPoints);
+        quizCompletionRepository.save(completion);
     }
 
     /** Finds the submitting student; role is still enforced at the controller layer. */

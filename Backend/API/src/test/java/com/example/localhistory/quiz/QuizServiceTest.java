@@ -9,6 +9,7 @@ import com.example.localhistory.user.UserService;
 import com.example.localhistory.user.model.Student;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,9 @@ class QuizServiceTest {
 
     @Mock
     private QuizRepository quizRepository;
+
+    @Mock
+    private QuizCompletionRepository quizCompletionRepository;
 
     @Mock
     private LandmarkRepository landmarkRepository;
@@ -58,12 +63,18 @@ class QuizServiceTest {
 
         when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
         when(quizRepository.findById(1L)).thenReturn(Optional.of(quiz));
+        when(quizCompletionRepository.existsByStudentIdAndQuizId(10L, 1L)).thenReturn(false);
 
         QuizSubmissionResultDTO result = service.submitQuiz("student@example.com", 1L, request);
 
         assertThat(result.getCorrectAnswers()).isEqualTo(2);
         assertThat(result.getAwardedPoints()).isEqualTo(4);
+        assertThat(result.isAlreadyCompleted()).isFalse();
         verify(userService).awardPoints(10L, 4);
+
+        ArgumentCaptor<QuizCompletion> completionCaptor = ArgumentCaptor.forClass(QuizCompletion.class);
+        verify(quizCompletionRepository).save(completionCaptor.capture());
+        assertThat(completionCaptor.getValue().getAwardedPoints()).isEqualTo(4);
     }
 
     @Test
@@ -74,15 +85,69 @@ class QuizServiceTest {
 
         when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
         when(quizRepository.findById(1L)).thenReturn(Optional.of(quiz));
+        when(quizCompletionRepository.existsByStudentIdAndQuizId(10L, 1L)).thenReturn(false);
 
         QuizSubmissionResultDTO result = service.submitQuiz("student@example.com", 1L, request);
 
         assertThat(result.getCorrectAnswers()).isZero();
         assertThat(result.getAwardedPoints()).isZero();
         verify(userService, never()).awardPoints(anyLong(), anyInt());
+        verify(quizCompletionRepository).save(any(QuizCompletion.class));
     }
 
-    private Student studentWithProgress(Long id, int pointsRequired) {
+    @Test
+    void submitQuizAwardsAtLeastOnePointForOneCorrectQuestion() {
+        Student student = studentWithProgress(10L, 100);
+        Quiz quiz = quizWithQuestions(question(101L, "A"));
+        QuizSubmissionRequest request = submission(answer(101L, "A"));
+
+        when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
+        when(quizRepository.findById(1L)).thenReturn(Optional.of(quiz));
+        when(quizCompletionRepository.existsByStudentIdAndQuizId(10L, 1L)).thenReturn(false);
+
+        QuizSubmissionResultDTO result = service.submitQuiz("student@example.com", 1L, request);
+
+        assertThat(result.getCorrectAnswers()).isEqualTo(1);
+        assertThat(result.getAwardedPoints()).isEqualTo(1);
+        verify(userService).awardPoints(10L, 1);
+    }
+
+    @Test
+    void submitQuizFallsBackToDefaultRequiredPointsWhenStudentProgressIsMissing() {
+        Student student = studentWithProgress(10L, null);
+        Quiz quiz = quizWithQuestions(question(101L, "A"));
+        QuizSubmissionRequest request = submission(answer(101L, "A"));
+
+        when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
+        when(quizRepository.findById(1L)).thenReturn(Optional.of(quiz));
+        when(quizCompletionRepository.existsByStudentIdAndQuizId(10L, 1L)).thenReturn(false);
+
+        QuizSubmissionResultDTO result = service.submitQuiz("student@example.com", 1L, request);
+
+        assertThat(result.getAwardedPoints()).isEqualTo(1);
+        verify(userService).awardPoints(10L, 1);
+    }
+
+    @Test
+    void submitQuizGradesRetakeButDoesNotAwardPointsAgain() {
+        Student student = studentWithProgress(10L, 100);
+        Quiz quiz = quizWithQuestions(question(101L, "A"));
+        QuizSubmissionRequest request = submission(answer(101L, "A"));
+
+        when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
+        when(quizRepository.findById(1L)).thenReturn(Optional.of(quiz));
+        when(quizCompletionRepository.existsByStudentIdAndQuizId(10L, 1L)).thenReturn(true);
+
+        QuizSubmissionResultDTO result = service.submitQuiz("student@example.com", 1L, request);
+
+        assertThat(result.getCorrectAnswers()).isEqualTo(1);
+        assertThat(result.getAwardedPoints()).isZero();
+        assertThat(result.isAlreadyCompleted()).isTrue();
+        verify(userService, never()).awardPoints(anyLong(), anyInt());
+        verify(quizCompletionRepository, never()).save(any(QuizCompletion.class));
+    }
+
+    private Student studentWithProgress(Long id, Integer pointsRequired) {
         Student student = new Student();
         student.setId(id);
         student.setPointsRequired(pointsRequired);

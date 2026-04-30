@@ -1,5 +1,6 @@
 package com.example.localhistory.ui.quiz
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,20 +17,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -161,18 +163,61 @@ private fun QuizQuestionContent(
                 )
 
                 question.options.forEach { option ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                    val isSelected = state.answers[question.id] == option
+
+                    Card(
+                        onClick = { onAnswerChange(question.id, option) },
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSelected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceContainerLow
+                            }
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = if (isSelected) 4.dp else 1.dp
+                        ),
+                        border = if (isSelected) {
+                            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                        } else {
+                            BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        RadioButton(
-                            selected = state.answers[question.id] == option,
-                            onClick = { onAnswerChange(question.id, option) }
-                        )
-                        Text(
-                            text = option,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
+                        ) {
+                            if (isSelected) {
+                                Icon(
+                                    Icons.Outlined.CheckCircle,
+                                    contentDescription = null,
+                                    tint = if (isSelected) {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.outline
+                                    },
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Outlined.RadioButtonUnchecked,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Text(
+                                text = option,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (isSelected) {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                }
+                            )
+                        }
                     }
                 }
 

@@ -30,6 +30,8 @@ public class UserService {
             throw new AccessDeniedException("Only students can receive points");
         }
 
+        initializeMissingStudentProgress(student);
+
         int newPoints = student.getPoints() + points;
 
         // Award points, level up, save remaining points, etc.
@@ -40,5 +42,19 @@ public class UserService {
         }
 
         student.setPoints(newPoints);
+    }
+
+    private void initializeMissingStudentProgress(Student student) {
+        if (student.getLevel() == null || student.getLevel() < 1) {
+            student.setLevel(1);
+        }
+
+        if (student.getPoints() == null || student.getPoints() < 0) {
+            student.setPoints(0);
+        }
+
+        if (student.getPointsRequired() == null || student.getPointsRequired() < 1) {
+            student.setPointsRequired(100);
+        }
     }
 }
