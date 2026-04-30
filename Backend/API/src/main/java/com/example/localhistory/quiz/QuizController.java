@@ -122,7 +122,8 @@ public class QuizController {
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<QuizSubmissionResultDTO> submitQuiz(
             @PathVariable Long id,
-            @Valid @RequestBody QuizSubmissionRequest request) {
-        return ResponseEntity.ok(quizService.submitQuiz(id, request));
+            @Valid @RequestBody QuizSubmissionRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(quizService.submitQuiz(authentication.getName(), id, request));
     }
 }

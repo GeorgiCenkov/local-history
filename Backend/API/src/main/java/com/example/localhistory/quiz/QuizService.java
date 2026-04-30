@@ -11,6 +11,10 @@ import com.example.localhistory.quiz.dto.response.PublicQuizDTO;
 import com.example.localhistory.quiz.dto.response.QuizDTO;
 import com.example.localhistory.quiz.dto.response.QuizQuestionResultDTO;
 import com.example.localhistory.quiz.dto.response.QuizSubmissionResultDTO;
+import com.example.localhistory.user.UserRepository;
+import com.example.localhistory.user.UserService;
+import com.example.localhistory.user.model.Student;
+import com.example.localhistory.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ public class QuizService {
 
     private final QuizRepository quizRepository;
     private final LandmarkRepository landmarkRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
     private final QuizMapper mapper;
 
     /** Returns all quizzes without correct answers for regular client reads. */
@@ -111,8 +117,9 @@ public class QuizService {
      * Grades a quiz submission in-memory.
      * No attempt entity exists yet, so this returns the result without saving it.
      */
-    @Transactional(readOnly = true)
-    public QuizSubmissionResultDTO submitQuiz(Long id, QuizSubmissionRequest request) {
+    @Transactional
+    public QuizSubmissionResultDTO submitQuiz(String studentEmail, Long id, QuizSubmissionRequest request) {
+        Student student = findStudentOrThrow(studentEmail);
         Quiz quiz = findQuizOrThrow(id);
         Map<Long, String> answersByQuestionId = mapAnswersByQuestionId(request);
         validateAnswersBelongToQuiz(quiz, answersByQuestionId.keySet());
@@ -121,12 +128,19 @@ public class QuizService {
                 .stream()
                 .map(question -> gradeQuestion(question, answersByQuestionId.get(question.getId())))
                 .toList();
+        int correctAnswers = (int) results.stream().filter(QuizQuestionResultDTO::isCorrect).count();
+        int awardedPoints = calculateQuizRewardPoints(student, correctAnswers);
+
+        if (awardedPoints > 0) {
+            userService.awardPoints(student.getId(), awardedPoints);
+        }
 
         QuizSubmissionResultDTO result = new QuizSubmissionResultDTO();
         result.setQuizId(quiz.getId());
         result.setTotalQuestions(quiz.getQuestions().size());
         result.setAnsweredQuestions(answersByQuestionId.size());
-        result.setCorrectAnswers((int) results.stream().filter(QuizQuestionResultDTO::isCorrect).count());
+        result.setCorrectAnswers(correctAnswers);
+        result.setAwardedPoints(awardedPoints);
         result.setResults(results);
         return result;
     }
@@ -208,6 +222,28 @@ public class QuizService {
         result.setCorrectAnswer(question.getCorrectAnswer());
         result.setCorrect(question.getCorrectAnswer().equals(submittedAnswer));
         return result;
+    }
+
+    /** Calculates one whole-point reward worth about 1% of the current level requirement. */
+    private int calculateQuizRewardPoints(Student student, int correctAnswers) {
+        if (correctAnswers == 0) {
+            return 0;
+        }
+
+        int pointsPerCorrectAnswer = Math.max(1, Math.round(student.getPointsRequired() * 0.01f));
+        return pointsPerCorrectAnswer * correctAnswers;
+    }
+
+    /** Finds the submitting student; role is still enforced at the controller layer. */
+    private Student findStudentOrThrow(String studentEmail) {
+        User user = userRepository.findByEmail(studentEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + studentEmail));
+
+        if (user instanceof Student student) {
+            return student;
+        }
+
+        throw new IllegalArgumentException("Only students can submit quizzes");
     }
 
     /** Centralizes the public "find or 404" path. */

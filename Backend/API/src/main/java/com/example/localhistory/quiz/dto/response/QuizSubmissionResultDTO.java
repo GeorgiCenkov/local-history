@@ -10,5 +10,6 @@ public class QuizSubmissionResultDTO {
     private int totalQuestions;
     private int answeredQuestions;
     private int correctAnswers;
+    private int awardedPoints;
     private List<QuizQuestionResultDTO> results;
 }
