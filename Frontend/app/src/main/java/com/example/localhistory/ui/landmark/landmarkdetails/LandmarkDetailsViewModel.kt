@@ -3,6 +3,7 @@ package com.example.localhistory.ui.landmark.landmarkdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.localhistory.R
+import com.example.localhistory.data.repository.AuthRepository
 import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LandmarkResult
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class LandmarkDetailViewModel @Inject constructor(
     private val repository: LandmarkRepository,
     private val imageUploadRepository: ImageUploadRepository,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TeacherLandmarksUiState())
@@ -129,12 +131,19 @@ class LandmarkDetailViewModel @Inject constructor(
             )
 
             when (val submitResult = repository.submitVisit(request)) {
-                is LandmarkResult.Success -> _state.update {
-                    it.copy(
-                        visits = listOf(submitResult.data) + it.visits,
-                        isSubmittingVisit = false,
-                        successMessageRes = R.string.landmark_visit_submit_success
-                    )
+                is LandmarkResult.Success -> {
+                    // The backend awards XP while creating the visit, but the visit response
+                    // does not contain the updated StudentDTO. Refresh auth so Profile sees
+                    // the new level/points stored in AuthDataStore.
+                    authRepository.refreshSession()
+
+                    _state.update {
+                        it.copy(
+                            visits = listOf(submitResult.data) + it.visits,
+                            isSubmittingVisit = false,
+                            successMessageRes = R.string.landmark_visit_submit_success
+                        )
+                    }
                 }
 
                 is LandmarkResult.Error -> _state.update {

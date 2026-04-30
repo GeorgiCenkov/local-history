@@ -3,9 +3,11 @@ package com.example.localhistory.data.repository
 import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.remote.AuthService
 import com.example.localhistory.model.request.LoginRequest
+import com.example.localhistory.model.request.RefreshTokenRequest
 import com.example.localhistory.model.request.RegisterRequest
 import com.example.localhistory.model.response.AuthResponse
 import com.example.localhistory.model.response.Role
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.LocalDate
 
 // sealed class gives you success/error as types instead of exceptions
@@ -64,4 +66,22 @@ class AuthRepository(
         }
     }
 
+    suspend fun refreshSession(): AuthResult<AuthResponse> {
+        return try {
+            val refreshToken = authDataStore.refreshToken.first()
+                ?: return AuthResult.Error("Missing refresh token")
+
+            val response = api.refresh(RefreshTokenRequest(refreshToken))
+            val data = response.body()
+
+            if (response.isSuccessful && data != null) {
+                authDataStore.saveAuth(data)
+                AuthResult.Success(data)
+            } else {
+                AuthResult.Error(response.errorBody()?.string() ?: "Session refresh failed")
+            }
+        } catch (e: Exception) {
+            AuthResult.Error(e.message ?: "Network error")
+        }
+    }
 }

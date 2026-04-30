@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material3.Button
@@ -27,14 +29,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.model.response.Role
-import com.example.localhistory.model.response.UserDTO
+import com.example.localhistory.model.response.User
 import com.example.localhistory.ui.components.LanguageToggle
 import com.example.localhistory.ui.components.ThemeToggle
 
 // Reusable profile screen for teacher or student
 @Composable
 fun ProfileScreen(
-    user: UserDTO,
+    user: User,
     onLogout: () -> Unit
 ) {
     Scaffold { padding ->
@@ -42,7 +44,8 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ProfileMorphBadge(role = user.role)
@@ -68,6 +71,22 @@ fun ProfileScreen(
             )
 
             Spacer(Modifier.height(28.dp))
+
+            when (user) {
+                is User.Student -> {
+                    StudentGameStatsCard(
+                        level = user.level,
+                        points = user.points,
+                        pointsRequired = user.pointsRequired
+                    )
+
+                    Spacer(Modifier.height(24.dp))
+                }
+
+                is User.Teacher -> {
+                    TeacherProfileStatsCard(user = user)
+                }
+            }
 
             ElevatedCard(
                 colors = CardDefaults.elevatedCardColors(

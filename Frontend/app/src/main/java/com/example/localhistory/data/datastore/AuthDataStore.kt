@@ -5,8 +5,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.localhistory.data.remote.adapter.LocalDateAdapter
+import com.example.localhistory.data.remote.adapter.UserAdapter
 import com.example.localhistory.model.response.AuthResponse
-import com.example.localhistory.model.response.UserDTO
+import com.example.localhistory.model.response.User
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.flow.Flow
@@ -24,12 +25,13 @@ object AuthKeys {
 
 private val gson: Gson = GsonBuilder()
     .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+    .registerTypeAdapter(User::class.java, UserAdapter())
     .create()
 
 data class AuthSession(
     val accessToken: String?,
     val refreshToken: String?,
-    val user: UserDTO?
+    val user: User?
 )
 
 class AuthDataStore(private val context: Context) {
@@ -41,7 +43,7 @@ class AuthDataStore(private val context: Context) {
         access: String,
         refresh: String,
         userId: Long,
-        userData: UserDTO
+        userData: User
     ) {
         store.edit { prefs ->
             prefs[AuthKeys.ACCESS_TOKEN] = access
@@ -71,9 +73,9 @@ class AuthDataStore(private val context: Context) {
     }
 
     // READ SERIALIZED USER DATA
-    val user: Flow<UserDTO?> = store.data.map { prefs ->
+    val user: Flow<User?> = store.data.map { prefs ->
         prefs[AuthKeys.USER_DATA]?.let {
-            gson.fromJson(it, UserDTO::class.java)
+            gson.fromJson(it, User::class.java)
         }
     }
 
@@ -83,7 +85,7 @@ class AuthDataStore(private val context: Context) {
             accessToken = prefs[AuthKeys.ACCESS_TOKEN],
             refreshToken = prefs[AuthKeys.REFRESH_TOKEN],
             user = prefs[AuthKeys.USER_DATA]?.let {
-                gson.fromJson(it, UserDTO::class.java)
+                gson.fromJson(it, User::class.java)
             }
         )
     }

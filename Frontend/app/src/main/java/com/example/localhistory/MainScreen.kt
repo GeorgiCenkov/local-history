@@ -20,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.localhistory.model.response.Role
-import com.example.localhistory.model.response.UserDTO
+import com.example.localhistory.model.response.User
 import com.example.localhistory.navigation.Screen
 import com.example.localhistory.ui.components.BottomNavBar
 import com.example.localhistory.ui.discover.DiscoverScreen
@@ -35,7 +35,7 @@ import com.example.localhistory.ui.profile.ProfileScreen
 @Composable
 fun MainScreen(
     availableScreens: List<Screen>,
-    user: UserDTO,
+    user: User,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
