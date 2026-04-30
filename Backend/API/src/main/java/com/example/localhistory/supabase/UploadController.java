@@ -1,4 +1,4 @@
-package com.example.localhistory.supabase.dto;
+package com.example.localhistory.supabase;
 
 import com.example.localhistory.supabase.dto.request.CreateUploadUrlRequest;
 import com.example.localhistory.supabase.dto.response.CreateUploadUrlResponse;

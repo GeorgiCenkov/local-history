@@ -4,11 +4,14 @@ import android.content.Context
 import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.remote.AuthService
 import com.example.localhistory.data.remote.LandmarkService
+import com.example.localhistory.data.remote.UploadService
 import com.example.localhistory.data.remote.adapter.LocalDateAdapter
 import com.example.localhistory.data.remote.adapter.LocalDateTimeAdapter
 import com.example.localhistory.data.remote.interceptor.AuthInterceptor
 import com.example.localhistory.data.repository.AuthRepository
+import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
+import com.example.localhistory.data.repository.UploadHttpClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -53,6 +56,16 @@ object AppModule {
 
     @Provides
     @Singleton
+    @UploadHttpClient
+    fun provideUploadOkHttpClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+
+    @Provides
+    @Singleton
     fun provideRetrofit(client: OkHttpClient, gson: Gson): Retrofit =
         Retrofit.Builder()
             .baseUrl(API_BASE_URL)
@@ -72,6 +85,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUploadService(retrofit: Retrofit): UploadService =
+        retrofit.create(UploadService::class.java)
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
         api: AuthService,
         authDataStore: AuthDataStore
@@ -81,4 +99,12 @@ object AppModule {
     @Singleton
     fun provideLandmarkRepository(api: LandmarkService): LandmarkRepository =
         LandmarkRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideImageUploadRepository(
+        @ApplicationContext context: Context,
+        api: UploadService,
+        @UploadHttpClient uploadHttpClient: OkHttpClient
+    ): ImageUploadRepository = ImageUploadRepository(context, api, uploadHttpClient)
 }

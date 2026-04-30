@@ -20,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.ui.components.LocationPicker
+import com.example.localhistory.ui.components.imagepicker.LandmarkImagePicker
 
 // A screen available for teacher to create / edit landmarks
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +42,8 @@ fun LandmarkFormScreen(
     form: LandmarkFormState,
     isSaving: Boolean,
     isEditing: Boolean,
+    errorMessage: String? = null,
+    errorMessageRes: Int? = null,
     onFormChange: (LandmarkFormState) -> Unit,
     onBack: () -> Unit,
     onSave: () -> Unit
@@ -91,13 +95,12 @@ fun LandmarkFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
-                value = form.imageUrl,
-                onValueChange = { onFormChange(form.copy(imageUrl = it)) },
-                label = { Text(stringResource(R.string.landmark_field_image_url)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                modifier = Modifier.fillMaxWidth()
+            LandmarkImagePicker(
+                imageUrl = form.imageUrl,
+                selectedImageUri = form.selectedImageUri,
+                onImagePicked = { uri ->
+                    onFormChange(form.copy(selectedImageUri = uri))
+                }
             )
 
             LocationPicker(
@@ -121,6 +124,15 @@ fun LandmarkFormScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
+
+            val resolvedErrorMessage = errorMessageRes?.let { stringResource(it) } ?: errorMessage
+            if (resolvedErrorMessage != null) {
+                Text(
+                    text = resolvedErrorMessage,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),

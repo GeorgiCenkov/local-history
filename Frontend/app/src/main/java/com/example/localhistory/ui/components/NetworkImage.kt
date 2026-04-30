@@ -2,6 +2,7 @@ package com.example.localhistory.ui.components
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
+import com.example.localhistory.R
 
 // Basic container for loading any network image
 @Composable
@@ -65,9 +68,13 @@ fun NetworkImage(
                     }
 
                     is AsyncImagePainter.State.Error -> {
-                        Column(horizontalAlignment = Alignment.Companion.CenterHorizontally) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             Icon(Icons.Outlined.Image, contentDescription = null)
-                            Text("Image failed")
+                            Text(stringResource(R.string.image_load_failed))
                         }
                     }
 

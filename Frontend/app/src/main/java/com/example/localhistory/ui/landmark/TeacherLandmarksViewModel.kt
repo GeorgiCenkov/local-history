@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.localhistory.R
 import com.example.localhistory.model.Coordinates
+import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LandmarkResult
 import com.example.localhistory.model.request.LandmarkRequest
@@ -21,6 +22,7 @@ data class LandmarkFormState(
     val title: String = "",
     val description: String = "",
     val imageUrl: String = "",
+    val selectedImageUri: String? = null,
     val latitude: String = "",
     val longitude: String = "",
     val rewardPoints: String = ""
@@ -44,7 +46,8 @@ data class TeacherLandmarksUiState(
 // View model for handling CRUD of landmarks
 @HiltViewModel
 class TeacherLandmarksViewModel @Inject constructor(
-    private val repository: LandmarkRepository
+    private val repository: LandmarkRepository,
+    private val imageUploadRepository: ImageUploadRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TeacherLandmarksUiState())
@@ -69,7 +72,7 @@ class TeacherLandmarksViewModel @Inject constructor(
     }
 
     fun updateForm(form: LandmarkFormState) {
-        _state.update { it.copy(form = form, errorMessage = null) }
+        _state.update { it.copy(form = form, errorMessage = null, errorMessageRes = null) }
     }
 
     fun openLandmark(landmark: LandmarkDTO) {
@@ -130,6 +133,7 @@ class TeacherLandmarksViewModel @Inject constructor(
                     title = landmark.title,
                     description = landmark.description,
                     imageUrl = landmark.imageUrl,
+                    selectedImageUri = null,
                     latitude = landmark.coordinates.latitude.toString(),
                     longitude = landmark.coordinates.longitude.toString(),
                     rewardPoints = landmark.visitRewardPoints.toString()
@@ -150,23 +154,44 @@ class TeacherLandmarksViewModel @Inject constructor(
         val longitude = form.longitude.toDoubleOrNull()
         val rewardPoints = form.rewardPoints.toIntOrNull()
 
-        if (form.title.isBlank() || form.description.isBlank() || form.imageUrl.isBlank() ||
+        if (form.title.isBlank() || form.description.isBlank() ||
+            (form.imageUrl.isBlank() && form.selectedImageUri.isNullOrBlank()) ||
             latitude == null || longitude == null || rewardPoints == null
         ) {
             _state.update { it.copy(errorMessageRes = R.string.landmark_error_invalid_form) }
             return
         }
 
-        val request = LandmarkRequest(
-            title = form.title.trim(),
-            description = form.description.trim(),
-            imageUrl = form.imageUrl.trim(),
-            coordinates = Coordinates(latitude = latitude, longitude = longitude),
-            visitRewardPoints = rewardPoints
-        )
-
         viewModelScope.launch {
-            _state.update { it.copy(isSaving = true, errorMessage = null) }
+            _state.update { it.copy(isSaving = true, errorMessage = null, errorMessageRes = null) }
+
+            val imageUrl = when (val selectedImageUri = form.selectedImageUri) {
+                null -> form.imageUrl.trim()
+                else -> {
+                    // Landmark saves must store a public image URL. If the user picked a local
+                    // image, upload it first through the signed URL flow and use the returned URL.
+                    when (val uploadResult = imageUploadRepository.uploadImage(selectedImageUri)) {
+                        is LandmarkResult.Success -> uploadResult.data
+                        is LandmarkResult.Error -> {
+                            _state.update {
+                                it.copy(
+                                    isSaving = false,
+                                    errorMessageRes = R.string.landmark_error_image_upload_failed
+                                )
+                            }
+                            return@launch
+                        }
+                    }
+                }
+            }
+
+            val request = LandmarkRequest(
+                title = form.title.trim(),
+                description = form.description.trim(),
+                imageUrl = imageUrl,
+                coordinates = Coordinates(latitude = latitude, longitude = longitude),
+                visitRewardPoints = rewardPoints
+            )
 
             val result = form.id?.let { repository.updateLandmark(it, request) }
                 ?: repository.createLandmark(request)

@@ -50,9 +50,16 @@
     <string name="landmark_field_longitude">Географска дължина</string>
     <string name="landmark_field_reward_points">Точки награда</string>
     <string name="landmark_error_invalid_form">Попълнете всички полета с валидни стойности преди запазване.</string>
+    <string name="landmark_error_image_upload_failed">Избраното изображение не можа да бъде качено. Моля, опитайте отново.</string>
     <string name="landmark_action_show_map">Покажи на картата</string>
     <string name="landmark_action_open_directions">Отвори маршрута в Google Карти</string>
     <string name="landmark_map_title">Местоположение на забележителността</string>
+    <string name="landmark_image_picker_title">Изображение на забележителността</string>
+    <string name="landmark_image_picker_preview">Преглед на изображението на забележителността</string>
+    <string name="landmark_image_picker_hint">Избраното изображение ще бъде качено при запазване.</string>
+    <string name="landmark_image_picker_existing">Текущото изображение ще се запази, освен ако не изберете ново.</string>
+    <string name="landmark_image_picker_choose">Избери изображение</string>
+    <string name="image_load_failed">Изображението не можа да се зареди</string>
     <string name="landmark_filter_label">Търси тук</string>
     <string name="landmark_filter_placeholder">Търсене по заглавие или описание</string>
     <string name="landmark_filter_clear">Изчисти филтъра</string>

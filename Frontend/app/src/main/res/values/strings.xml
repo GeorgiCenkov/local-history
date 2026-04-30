@@ -49,9 +49,16 @@
     <string name="landmark_field_longitude">Longitude</string>
     <string name="landmark_field_reward_points">Reward points</string>
     <string name="landmark_error_invalid_form">Fill every field with valid values before saving.</string>
+    <string name="landmark_error_image_upload_failed">Could not upload the selected image. Please try again.</string>
     <string name="landmark_action_show_map">Show on map</string>
     <string name="landmark_action_open_directions">Open directions in Google Maps</string>
     <string name="landmark_map_title">Landmark location</string>
+    <string name="landmark_image_picker_title">Landmark image</string>
+    <string name="landmark_image_picker_preview">Landmark image preview</string>
+    <string name="landmark_image_picker_hint">The selected image will be uploaded when you save.</string>
+    <string name="landmark_image_picker_existing">Current image will be kept unless you choose a new one.</string>
+    <string name="landmark_image_picker_choose">Choose image</string>
+    <string name="image_load_failed">Image failed to load</string>
     <string name="landmark_filter_label">Filter landmarks</string>
     <string name="landmark_filter_placeholder">Search by title or description</string>
     <string name="landmark_filter_clear">Clear filter</string>

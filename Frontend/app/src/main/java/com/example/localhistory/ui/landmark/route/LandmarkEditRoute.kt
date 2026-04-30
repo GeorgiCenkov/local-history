@@ -31,6 +31,8 @@ fun LandmarkEditRoute(
         form = state.form,
         isSaving = state.isSaving,
         isEditing = true,
+        errorMessage = state.errorMessage,
+        errorMessageRes = state.errorMessageRes,
         onFormChange = viewModel::updateForm,
         onBack = onBack,
         onSave = {
