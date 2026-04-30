@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
+import com.example.localhistory.ui.components.LocationPicker
 
 // A screen available for teacher to create / edit landmarks
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,25 +100,18 @@ fun LandmarkFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                OutlinedTextField(
-                    value = form.latitude,
-                    onValueChange = { onFormChange(form.copy(latitude = it)) },
-                    label = { Text(stringResource(R.string.landmark_field_latitude)) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.weight(1f)
-                )
-
-                OutlinedTextField(
-                    value = form.longitude,
-                    onValueChange = { onFormChange(form.copy(longitude = it)) },
-                    label = { Text(stringResource(R.string.landmark_field_longitude)) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            LocationPicker(
+                latitude = form.latitude,
+                longitude = form.longitude,
+                onLocationPicked = { latitude, longitude ->
+                    onFormChange(
+                        form.copy(
+                            latitude = latitude.toString(),
+                            longitude = longitude.toString()
+                        )
+                    )
+                }
+            )
 
             OutlinedTextField(
                 value = form.rewardPoints,

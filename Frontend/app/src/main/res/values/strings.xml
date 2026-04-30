@@ -52,6 +52,15 @@
     <string name="landmark_action_show_map">Show on map</string>
     <string name="landmark_action_open_directions">Open directions in Google Maps</string>
     <string name="landmark_map_title">Landmark location</string>
+    <string name="location_picker_title">Location</string>
+    <string name="location_picker_empty">No location selected</string>
+    <string name="location_picker_choose">Choose location</string>
+    <string name="location_picker_change">Change location</string>
+    <string name="location_picker_sheet_title">Choose location</string>
+    <string name="location_picker_hint">Tap a place on the map to set the landmark coordinates.</string>
+    <string name="location_picker_marker_title">Selected location</string>
+    <string name="location_picker_no_selection">Tap the map to choose a location.</string>
+    <string name="location_picker_confirm">Use location</string>
 
     <!-- Home screen -->
     <string name="home_title">🏠 Home</string>

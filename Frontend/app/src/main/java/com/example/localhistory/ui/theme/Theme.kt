@@ -39,12 +39,9 @@ private val DarkColors = darkColorScheme(
     onSurfaceVariant = Gray200,
 )
 
-// Global toggle state — lives at app level
-var isDarkTheme by mutableStateOf(false)
-
 @Composable
 fun LocalHistoryTheme(
-    darkTheme: Boolean = isDarkTheme,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current

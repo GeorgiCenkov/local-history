@@ -12,19 +12,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.localhistory.ui.theme.isDarkTheme
+import com.example.localhistory.ui.theme.LocalAppThemeState
 
 @Composable
 fun ThemeToggle() {
+    val themeState = LocalAppThemeState.current
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            imageVector        = if (isDarkTheme) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
+            imageVector = if (themeState.isDarkTheme) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
             contentDescription = null
         )
+
         Spacer(modifier = Modifier.width(8.dp))
+
         Switch(
-            checked         = isDarkTheme,
-            onCheckedChange = { isDarkTheme = it }
+            checked = themeState.isDarkTheme,
+            onCheckedChange =  themeState.setDarkTheme
         )
     }
 }
