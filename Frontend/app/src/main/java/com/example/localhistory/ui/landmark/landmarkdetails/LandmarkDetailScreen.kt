@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -92,8 +93,10 @@ fun LandmarkDetailScreen(
 
     val scope = rememberCoroutineScope()
     var isMapSheetVisible by remember { mutableStateOf(false) }
+    var isRetakeDialogVisible by remember { mutableStateOf(false) }
     val hasSubmittedVisit = currentUserId != null && visits.any { it.userId == currentUserId }
     val canTakePublicQuiz = onTakeQuiz != null && hasSubmittedVisit && publicQuiz != null
+    val hasCompletedPublicQuiz = publicQuiz?.alreadyCompleted == true
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -201,12 +204,36 @@ fun LandmarkDetailScreen(
                             Spacer(Modifier.height(10.dp))
 
                             Button(
-                                onClick = { publicQuiz.id.let { onTakeQuiz.invoke(it) } },
+                                onClick = {
+                                    if (hasCompletedPublicQuiz) {
+                                        isRetakeDialogVisible = true
+                                    } else {
+                                        publicQuiz.id.let { onTakeQuiz.invoke(it) }
+                                    }
+                                },
+                                colors = if (hasCompletedPublicQuiz) {
+                                    // Keep the retake action available, but give it a disabled visual
+                                    // treatment because the backend will grade it without awarding XP.
+                                    ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                } else {
+                                    ButtonDefaults.buttonColors()
+                                },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(Icons.Outlined.Quiz, contentDescription = null)
                                 Spacer(Modifier.width(8.dp))
-                                Text(stringResource(R.string.quiz_take_action))
+                                Text(
+                                    stringResource(
+                                        if (hasCompletedPublicQuiz) {
+                                            R.string.quiz_retake_action
+                                        } else {
+                                            R.string.quiz_take_action
+                                        }
+                                    )
+                                )
                             }
                         }
                     }
@@ -395,6 +422,33 @@ fun LandmarkDetailScreen(
             dismissButton = {
                 TextButton(onClick = onDismissQuizPrompt) {
                     Text(stringResource(R.string.action_later))
+                }
+            }
+        )
+    }
+
+    if (isRetakeDialogVisible && canTakePublicQuiz) {
+        AlertDialog(
+            onDismissRequest = { isRetakeDialogVisible = false },
+            title = {
+                Text(stringResource(R.string.quiz_retake_warning_title))
+            },
+            text = {
+                Text(stringResource(R.string.quiz_retake_warning_body))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        publicQuiz.id.let { onTakeQuiz.invoke(it) }
+                        isRetakeDialogVisible = false
+                    }
+                ) {
+                    Text(stringResource(R.string.quiz_retake_continue))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { isRetakeDialogVisible = false }) {
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )

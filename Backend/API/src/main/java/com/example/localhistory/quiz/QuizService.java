@@ -39,10 +39,11 @@ public class QuizService {
 
     /** Returns all quizzes without correct answers for regular client reads. */
     @Transactional(readOnly = true)
-    public List<PublicQuizDTO> getAllQuizzes() {
+    public List<PublicQuizDTO> getAllQuizzes(String userEmail) {
+        Student student = findStudentOrNull(userEmail);
         return quizRepository.findAll()
                 .stream()
-                .map(mapper::toPublicDTO)
+                .map(quiz -> toPublicQuizDTO(quiz, student))
                 .toList();
     }
 
@@ -57,15 +58,16 @@ public class QuizService {
 
     /** Fetches a public quiz by ID, omitting the correct answers. */
     @Transactional(readOnly = true)
-    public PublicQuizDTO getQuizById(Long id) {
-        return mapper.toPublicDTO(findQuizOrThrow(id));
+    public PublicQuizDTO getQuizById(String userEmail, Long id) {
+        return toPublicQuizDTO(findQuizOrThrow(id), findStudentOrNull(userEmail));
     }
 
     /** Fetches the quiz attached to a landmark, omitting the correct answers. */
     @Transactional(readOnly = true)
-    public PublicQuizDTO getQuizByLandmarkId(Long landmarkId) {
-        return mapper.toPublicDTO(quizRepository.findByLandmarkId(landmarkId)
-                .orElseThrow(() -> new EntityNotFoundException("Quiz not found for landmark id: " + landmarkId)));
+    public PublicQuizDTO getQuizByLandmarkId(String userEmail, Long landmarkId) {
+        Quiz quiz = quizRepository.findByLandmarkId(landmarkId)
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found for landmark id: " + landmarkId));
+        return toPublicQuizDTO(quiz, findStudentOrNull(userEmail));
     }
 
     /** Fetches a teacher-owned quiz with correct answers for management screens. */
@@ -131,7 +133,6 @@ public class QuizService {
                 .toList();
         int correctAnswers = (int) results.stream().filter(QuizQuestionResultDTO::isCorrect).count();
 
-        // If the user has already completed it
         boolean alreadyCompleted = quizCompletionRepository.existsByStudentIdAndQuizId(student.getId(), quiz.getId());
 
         int awardedPoints = alreadyCompleted ? 0 : calculateQuizRewardPoints(student, correctAnswers);
@@ -235,6 +236,14 @@ public class QuizService {
         return result;
     }
 
+    /** Adds student-specific completion state to a public quiz without exposing answer keys. */
+    private PublicQuizDTO toPublicQuizDTO(Quiz quiz, Student student) {
+        PublicQuizDTO dto = mapper.toPublicDTO(quiz);
+        dto.setAlreadyCompleted(student != null
+                && quizCompletionRepository.existsByStudentIdAndQuizId(student.getId(), quiz.getId()));
+        return dto;
+    }
+
     /** Calculates one whole-point reward worth about 1% of the current level requirement. */
     private int calculateQuizRewardPoints(Student student, int correctAnswers) {
         if (correctAnswers == 0) {
@@ -267,6 +276,14 @@ public class QuizService {
         }
 
         throw new IllegalArgumentException("Only students can submit quizzes");
+    }
+
+    /** Teacher/public quiz reads should still work, but only students can have completion state. */
+    private Student findStudentOrNull(String userEmail) {
+        return userRepository.findByEmail(userEmail)
+                .filter(Student.class::isInstance)
+                .map(Student.class::cast)
+                .orElse(null);
     }
 
     /** Centralizes the public "find or 404" path. */

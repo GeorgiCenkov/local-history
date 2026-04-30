@@ -20,6 +20,7 @@ public interface QuizMapper {
     // Public quiz reads intentionally omit correctAnswer so students cannot
     // fetch answers before submitting.
     @Mapping(source = "landmark.id", target = "landmarkId")
+    @Mapping(target = "alreadyCompleted", ignore = true)
     PublicQuizDTO toPublicDTO(Quiz quiz);
 
     PublicQuizQuestionDTO toPublicQuestionDTO(QuizQuestion question);

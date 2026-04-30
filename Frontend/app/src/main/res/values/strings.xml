@@ -33,7 +33,7 @@
     <string name="profile_student_level_badge">Lv %1$d</string>
     <string name="profile_student_current_xp">%1$d XP</string>
     <string name="profile_student_points_to_next">%1$d XP to next level</string>
-    <string name="profile_student_progress_percent">%1$d%% complete</string>
+    <string name="profile_student_progress_percent">%1$d%%</string>
 
     <!-- Teacher landmarks -->
     <string name="landmarks_title">My landmarks</string>
@@ -90,6 +90,10 @@
     <string name="quiz_action_delete_option">Delete option</string>
     <string name="quiz_error_invalid_form">Enter a title, at least one question, at least two options per question, and make each correct answer match one option exactly.</string>
     <string name="quiz_take_action">Take quiz</string>
+    <string name="quiz_retake_action">Retake quiz</string>
+    <string name="quiz_retake_warning_title">Retake quiz?</string>
+    <string name="quiz_retake_warning_body">You have already completed this quiz. You can retake it for practice, but you will not earn more XP.</string>
+    <string name="quiz_retake_continue">Retake anyway</string>
     <string name="quiz_prompt_title">Ready for the quiz?</string>
     <string name="quiz_prompt_body">Your visit was submitted. You can now take the quiz for this landmark.</string>
     <string name="quiz_take_question_title">%1$d. %2$s</string>

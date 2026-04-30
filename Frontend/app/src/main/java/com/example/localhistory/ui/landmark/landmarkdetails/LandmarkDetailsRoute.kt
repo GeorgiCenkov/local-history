@@ -70,6 +70,9 @@ fun LandmarkDetailRoute(
                 if (onCreateQuiz != null) {
                     viewModel.loadTeacherQuiz(landmarkId)
                 }
+                if (canSubmitVisit) {
+                    viewModel.loadPublicQuiz(landmarkId)
+                }
             }
         }
 

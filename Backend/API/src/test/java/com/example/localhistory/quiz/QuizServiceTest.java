@@ -3,6 +3,7 @@ package com.example.localhistory.quiz;
 import com.example.localhistory.landmark.LandmarkRepository;
 import com.example.localhistory.quiz.dto.request.QuizQuestionAnswerRequest;
 import com.example.localhistory.quiz.dto.request.QuizSubmissionRequest;
+import com.example.localhistory.quiz.dto.response.PublicQuizDTO;
 import com.example.localhistory.quiz.dto.response.QuizSubmissionResultDTO;
 import com.example.localhistory.user.UserRepository;
 import com.example.localhistory.user.UserService;
@@ -145,6 +146,22 @@ class QuizServiceTest {
         assertThat(result.isAlreadyCompleted()).isTrue();
         verify(userService, never()).awardPoints(anyLong(), anyInt());
         verify(quizCompletionRepository, never()).save(any(QuizCompletion.class));
+    }
+
+    @Test
+    void getQuizByIdMarksQuizAlreadyCompletedForStudent() {
+        Student student = studentWithProgress(10L, 100);
+        Quiz quiz = quizWithQuestions(question(101L, "A"));
+        PublicQuizDTO publicQuiz = new PublicQuizDTO();
+
+        when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
+        when(quizRepository.findById(1L)).thenReturn(Optional.of(quiz));
+        when(mapper.toPublicDTO(quiz)).thenReturn(publicQuiz);
+        when(quizCompletionRepository.existsByStudentIdAndQuizId(10L, 1L)).thenReturn(true);
+
+        PublicQuizDTO result = service.getQuizById("student@example.com", 1L);
+
+        assertThat(result.isAlreadyCompleted()).isTrue();
     }
 
     private Student studentWithProgress(Long id, Integer pointsRequired) {

@@ -9,5 +9,6 @@ public class PublicQuizDTO {
     private Long id;
     private String title;
     private Long landmarkId;
+    private boolean alreadyCompleted;
     private List<PublicQuizQuestionDTO> questions;
 }

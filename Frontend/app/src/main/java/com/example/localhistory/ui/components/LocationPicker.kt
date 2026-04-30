@@ -52,7 +52,7 @@ fun LocationPicker(
             newValue == SheetValue.Hidden // Disable gestures to not confuse the coordinate display
         }
     )
-    
+
     val scope = rememberCoroutineScope()
     var isPickerVisible by remember { mutableStateOf(false) }
 

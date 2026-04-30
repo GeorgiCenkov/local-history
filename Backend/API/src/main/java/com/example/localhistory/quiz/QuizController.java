@@ -38,24 +38,26 @@ public class QuizController {
      * GET /api/quizzes — list all quizzes without correct answers.
      */
     @GetMapping
-    public ResponseEntity<List<PublicQuizDTO>> getAllQuizzes() {
-        return ResponseEntity.ok(quizService.getAllQuizzes());
+    public ResponseEntity<List<PublicQuizDTO>> getAllQuizzes(Authentication authentication) {
+        return ResponseEntity.ok(quizService.getAllQuizzes(authentication.getName()));
     }
 
     /**
      * GET /api/quizzes/{id} — fetch one public quiz by ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PublicQuizDTO> getQuizById(@PathVariable Long id) {
-        return ResponseEntity.ok(quizService.getQuizById(id));
+    public ResponseEntity<PublicQuizDTO> getQuizById(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(quizService.getQuizById(authentication.getName(), id));
     }
 
     /**
      * GET /api/quizzes/landmark/{landmarkId} — fetch the quiz for a landmark.
      */
     @GetMapping("/landmark/{landmarkId}")
-    public ResponseEntity<PublicQuizDTO> getQuizByLandmarkId(@PathVariable Long landmarkId) {
-        return ResponseEntity.ok(quizService.getQuizByLandmarkId(landmarkId));
+    public ResponseEntity<PublicQuizDTO> getQuizByLandmarkId(
+            @PathVariable Long landmarkId,
+            Authentication authentication) {
+        return ResponseEntity.ok(quizService.getQuizByLandmarkId(authentication.getName(), landmarkId));
     }
 
     /**
@@ -116,7 +118,7 @@ public class QuizController {
 
     /**
      * POST /api/quizzes/{id}/submit — grade a student's answers immediately.
-     * No attempt history is persisted by the current quiz model.
+     * The first completion is persisted so retakes can be graded without more XP.
      */
     @PostMapping("/{id}/submit")
     @PreAuthorize("hasRole('STUDENT')")

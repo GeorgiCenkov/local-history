@@ -34,7 +34,7 @@
     <string name="profile_student_level_badge">Ниво %1$d</string>
     <string name="profile_student_current_xp">%1$d XP</string>
     <string name="profile_student_points_to_next">Остават %1$d XP до следващо ниво</string>
-    <string name="profile_student_progress_percent">%1$d%% завършено</string>
+    <string name="profile_student_progress_percent">%1$d%%</string>
 
     <!-- Teacher landmarks -->
     <string name="landmarks_title">Моите забележителности</string>
@@ -91,6 +91,10 @@
     <string name="quiz_action_delete_option">Изтрий опция</string>
     <string name="quiz_error_invalid_form">Въведете заглавие, поне един въпрос, поне две опции за всеки въпрос и верен отговор, който съвпада точно с една от опциите.</string>
     <string name="quiz_take_action">Реши теста</string>
+    <string name="quiz_retake_action">Реши теста отново</string>
+    <string name="quiz_retake_warning_title">Да решите ли теста отново?</string>
+    <string name="quiz_retake_warning_body">Вече сте завършили този тест. Можете да го решите отново за упражнение, но няма да получите още XP.</string>
+    <string name="quiz_retake_continue">Реши отново</string>
     <string name="quiz_prompt_title">Готови ли сте за теста?</string>
     <string name="quiz_prompt_body">Посещението ви е изпратено. Вече можете да решите теста за тази забележителност.</string>
     <string name="quiz_take_question_title">%1$d. %2$s</string>
