@@ -24,11 +24,12 @@
     <string name="profile_birth_date">Дата на раждане</string>
     <string name="profile_user_id">Потребителски ID</string>
     <string name="profile_sign_out">Изход</string>
-    <string name="profile_student_progress">Напредък на ученика</string>
+    <string name="profile_student_progress">Напредък</string>
     <string name="profile_student_level">Ниво</string>
     <string name="profile_student_points">XP</string>
     <string name="profile_student_points_value">%1$d / %2$d XP</string>
     <string name="profile_student_level_badge">Ниво %1$d</string>
+    <string name="profile_student_current_xp">%1$d XP</string>
     <string name="profile_student_points_to_next">Остават %1$d XP до следващо ниво</string>
     <string name="profile_student_progress_percent">%1$d%% завършено</string>
 

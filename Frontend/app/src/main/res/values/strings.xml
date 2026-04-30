@@ -23,11 +23,12 @@
     <string name="profile_birth_date">Date of birth</string>
     <string name="profile_user_id">User ID</string>
     <string name="profile_sign_out">Sign out</string>
-    <string name="profile_student_progress">Student progress</string>
+    <string name="profile_student_progress">Progress</string>
     <string name="profile_student_level">Level</string>
     <string name="profile_student_points">XP</string>
     <string name="profile_student_points_value">%1$d / %2$d XP</string>
     <string name="profile_student_level_badge">Lv %1$d</string>
+    <string name="profile_student_current_xp">%1$d XP</string>
     <string name="profile_student_points_to_next">%1$d XP to next level</string>
     <string name="profile_student_progress_percent">%1$d%% complete</string>
 
