@@ -4,11 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -36,11 +33,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.model.response.PublicQuizDTO
-import com.example.localhistory.model.response.QuizSubmissionResultDTO
 import com.example.localhistory.ui.components.LoadingContent
 
 // Used to display a "public" quiz for students to take
@@ -267,110 +262,3 @@ private fun QuizQuestionContent(
     }
 }
 
-@Composable
-private fun QuizFinishContent(
-    result: QuizSubmissionResultDTO,
-    onDone: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val scorePercent = if (result.totalQuestions == 0) {
-        0
-    } else {
-        (result.correctAnswers * 100) / result.totalQuestions
-    }
-
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.verticalScroll(rememberScrollState())
-    ) {
-        Icon(
-            Icons.Outlined.EmojiEvents,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(56.dp)
-        )
-
-        Text(
-            text = stringResource(R.string.quiz_finish_title),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center
-        )
-
-        ElevatedCard(
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(
-                        R.string.quiz_finish_score,
-                        result.correctAnswers,
-                        result.totalQuestions,
-                        scorePercent
-                    ),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Text(
-                    text = stringResource(R.string.quiz_finish_answered, result.answeredQuestions),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Text(
-                    text = stringResource(R.string.quiz_finish_awarded_points, result.awardedPoints),
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            result.results.forEachIndexed { index, questionResult ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        Icons.Outlined.CheckCircle,
-                        contentDescription = null,
-                        tint = if (questionResult.correct) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.error
-                        }
-                    )
-                    Text(
-                        text = stringResource(
-                            if (questionResult.correct) {
-                                R.string.quiz_take_result_correct
-                            } else {
-                                R.string.quiz_take_result_incorrect
-                            },
-                            index + 1,
-                            questionResult.correctAnswer
-                        ),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-
-        Spacer(Modifier.height(4.dp))
-
-        Button(
-            onClick = onDone,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.action_done))
-        }
-    }
-}
