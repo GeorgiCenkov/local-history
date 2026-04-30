@@ -24,6 +24,18 @@ class QuizRepository(
         LandmarkResult.Error(it.message ?: "Network error")
     }
 
+    suspend fun getPublicQuizById(id: Long): LandmarkResult<PublicQuizDTO> = runCatching {
+        val response = api.getQuizById(id)
+        val body = response.body()
+        if (response.isSuccessful && body != null) {
+            LandmarkResult.Success(body)
+        } else {
+            LandmarkResult.Error(response.errorBody()?.string() ?: "Could not load quiz")
+        }
+    }.getOrElse {
+        LandmarkResult.Error(it.message ?: "Network error")
+    }
+
     suspend fun getTeacherQuizzes(): LandmarkResult<List<QuizDTO>> = runCatching {
         val response = api.getTeacherQuizzes()
         if (response.isSuccessful) {

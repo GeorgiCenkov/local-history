@@ -47,10 +47,8 @@ import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.model.response.LandmarkVisitDTO
 import com.example.localhistory.model.response.PublicQuizDTO
 import com.example.localhistory.model.response.QuizDTO
-import com.example.localhistory.model.response.QuizSubmissionResultDTO
 import com.example.localhistory.ui.components.LoadingContent
 import com.example.localhistory.ui.components.NetworkImage
-import com.example.localhistory.ui.quiz.TakeQuizDialog
 import kotlinx.coroutines.launch
 import java.util.Collections.emptyList
 
@@ -64,12 +62,8 @@ fun LandmarkDetailScreen(
     currentUserId: Long? = null,
     teacherQuiz: QuizDTO? = null,
     publicQuiz: PublicQuizDTO? = null,
-    quizAnswers: Map<Long, String> = emptyMap(),
-    quizSubmissionResult: QuizSubmissionResultDTO? = null,
     isVisitsLoading: Boolean = false,
     isQuizLoading: Boolean = false,
-    isQuizSubmitting: Boolean = false,
-    isQuizDialogVisible: Boolean = false,
     shouldPromptQuiz: Boolean = false,
     isSubmittingVisit: Boolean = false,
     errorMessage: String? = null,
@@ -81,11 +75,8 @@ fun LandmarkDetailScreen(
     onCreateQuiz: (() -> Unit)? = null,
     onEditQuiz: ((Long) -> Unit)? = null,
     onDeleteQuiz: (() -> Unit)? = null,
-    onTakeQuiz: (() -> Unit)? = null,
+    onTakeQuiz: ((Long) -> Unit)? = null,
     onDismissQuizPrompt: () -> Unit = {},
-    onDismissQuizDialog: () -> Unit = {},
-    onQuizAnswerChange: (Long, String) -> Unit = { _, _ -> },
-    onSubmitQuiz: () -> Unit = {},
     onSubmitVisitPhoto: ((String) -> Unit)? = null,
     onVisitPermissionDenied: (() -> Unit)? = null,
     onDismissVisitMessage: () -> Unit = {}
@@ -202,7 +193,7 @@ fun LandmarkDetailScreen(
                             Spacer(Modifier.height(10.dp))
 
                             Button(
-                                onClick = { onTakeQuiz?.invoke() },
+                                onClick = { publicQuiz.id.let { onTakeQuiz.invoke(it) } },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(Icons.Outlined.Quiz, contentDescription = null)
@@ -357,7 +348,7 @@ fun LandmarkDetailScreen(
         }
     }
 
-    if (errorMessageRes != null && !isQuizDialogVisible) {
+    if (errorMessageRes != null) {
         AlertDialog(
             onDismissRequest = onDismissVisitMessage,
             title = {
@@ -384,7 +375,12 @@ fun LandmarkDetailScreen(
                 Text(stringResource(R.string.quiz_prompt_body))
             },
             confirmButton = {
-                Button(onClick = { onTakeQuiz?.invoke() }) {
+                Button(
+                    onClick = {
+                        publicQuiz.id.let { onTakeQuiz.invoke(it) }
+                        onDismissQuizPrompt()
+                    }
+                ) {
                     Text(stringResource(R.string.quiz_take_action))
                 }
             },
@@ -393,20 +389,6 @@ fun LandmarkDetailScreen(
                     Text(stringResource(R.string.action_later))
                 }
             }
-        )
-    }
-
-    if (isQuizDialogVisible && publicQuiz != null) {
-        TakeQuizDialog(
-            quiz = publicQuiz,
-            answers = quizAnswers,
-            result = quizSubmissionResult,
-            isSubmitting = isQuizSubmitting,
-            errorMessage = errorMessage,
-            errorMessageRes = errorMessageRes,
-            onAnswerChange = onQuizAnswerChange,
-            onSubmit = onSubmitQuiz,
-            onDismiss = onDismissQuizDialog
         )
     }
 }

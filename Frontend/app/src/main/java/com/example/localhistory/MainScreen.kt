@@ -33,6 +33,7 @@ import com.example.localhistory.ui.landmark.route.LandmarkEditRoute
 import com.example.localhistory.ui.profile.ProfileScreen
 import com.example.localhistory.ui.quiz.QuizCreateRoute
 import com.example.localhistory.ui.quiz.QuizEditRoute
+import com.example.localhistory.ui.quiz.QuizTakeRoute
 
 @Composable
 fun MainScreen(
@@ -217,6 +218,11 @@ fun MainScreen(
                         { quizId -> navController.navigate(Screen.QuizEdit.createRoute(quizId)) }
                     } else {
                         null
+                    },
+                    onTakeQuiz = if (user.role == Role.STUDENT) {
+                        { quizId -> navController.navigate(Screen.QuizTake.createRoute(quizId)) }
+                    } else {
+                        null
                     }
                 )
             }
@@ -264,6 +270,18 @@ fun MainScreen(
                     quizId = quizId,
                     onBack = { navController.popBackStack() },
                     onSaved = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.QuizTake.route) { backStackEntry ->
+                val quizId = backStackEntry.arguments
+                    ?.getString("quizId")
+                    ?.toLongOrNull()
+                    ?: return@composable
+
+                QuizTakeRoute(
+                    quizId = quizId,
+                    onBack = { navController.popBackStack() }
                 )
             }
 

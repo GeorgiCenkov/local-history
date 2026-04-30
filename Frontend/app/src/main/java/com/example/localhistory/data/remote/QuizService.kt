@@ -22,6 +22,11 @@ interface QuizService {
         @Path("landmarkId") landmarkId: Long
     ): Response<PublicQuizDTO>
 
+    @GET("api/quizzes/{id}")
+    suspend fun getQuizById(
+        @Path("id") id: Long
+    ): Response<PublicQuizDTO>
+
     @GET("api/quizzes/teacher")
     suspend fun getTeacherQuizzes(): Response<List<QuizDTO>>
 

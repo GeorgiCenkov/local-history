@@ -10,8 +10,6 @@ import com.example.localhistory.data.repository.LandmarkResult
 import com.example.localhistory.data.repository.LocationRepository
 import com.example.localhistory.data.repository.QuizRepository
 import com.example.localhistory.model.request.LandmarkVisitRequest
-import com.example.localhistory.model.request.QuizQuestionAnswerRequest
-import com.example.localhistory.model.request.QuizSubmissionRequest
 import com.example.localhistory.ui.landmark.TeacherLandmarksUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,13 +38,9 @@ class LandmarkDetailViewModel @Inject constructor(
                 visits = emptyList(),
                 teacherQuiz = null,
                 publicQuiz = null,
-                quizAnswers = emptyMap(),
-                quizSubmissionResult = null,
                 isDetailLoading = true,
                 isVisitsLoading = false,
                 isQuizLoading = false,
-                isQuizSubmitting = false,
-                isQuizDialogVisible = false,
                 shouldPromptQuiz = false,
                 errorMessage = null,
                 errorMessageRes = null,
@@ -120,9 +114,6 @@ class LandmarkDetailViewModel @Inject constructor(
                 is LandmarkResult.Success -> _state.update {
                     it.copy(
                         publicQuiz = result.data,
-                        quizAnswers = result.data?.questions?.associate { question ->
-                            question.id to (it.quizAnswers[question.id] ?: "")
-                        }.orEmpty(),
                         isQuizLoading = false
                     )
                 }
@@ -257,84 +248,8 @@ class LandmarkDetailViewModel @Inject constructor(
         }
     }
 
-    fun showQuizDialog() {
-        _state.update {
-            it.copy(
-                isQuizDialogVisible = true,
-                shouldPromptQuiz = false,
-                quizSubmissionResult = null,
-                errorMessage = null,
-                errorMessageRes = null
-            )
-        }
-    }
-
     fun dismissQuizPrompt() {
         _state.update { it.copy(shouldPromptQuiz = false) }
-    }
-
-    fun dismissQuizDialog() {
-        _state.update {
-            it.copy(
-                isQuizDialogVisible = false,
-                shouldPromptQuiz = false,
-                quizSubmissionResult = null,
-                errorMessage = null,
-                errorMessageRes = null
-            )
-        }
-    }
-
-    fun updateQuizAnswer(questionId: Long, answer: String) {
-        _state.update {
-            it.copy(
-                quizAnswers = it.quizAnswers + (questionId to answer),
-                errorMessage = null,
-                errorMessageRes = null
-            )
-        }
-    }
-
-    fun submitQuiz() {
-        val quiz = _state.value.publicQuiz ?: return
-        val answers = quiz.questions.map { question ->
-            QuizQuestionAnswerRequest(
-                questionId = question.id,
-                answer = _state.value.quizAnswers[question.id].orEmpty()
-            )
-        }
-
-        if (answers.any { it.answer.isBlank() }) {
-            _state.update { it.copy(errorMessageRes = R.string.quiz_take_error_incomplete) }
-            return
-        }
-
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    isQuizSubmitting = true,
-                    quizSubmissionResult = null,
-                    errorMessage = null,
-                    errorMessageRes = null
-                )
-            }
-
-            when (val result = quizRepository.submitQuiz(quiz.id, QuizSubmissionRequest(answers))) {
-                is LandmarkResult.Success -> _state.update {
-                    it.copy(
-                        isQuizSubmitting = false,
-                        quizSubmissionResult = result.data
-                    )
-                }
-
-                is LandmarkResult.Error -> _state.update {
-                    it.copy(
-                        isQuizSubmitting = false,
-                        errorMessage = result.message
-                    )
-                }
-            }
-        }
     }
 
     // Backend validation returns this phrase for visits outside the configured radius.

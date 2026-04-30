@@ -95,10 +95,19 @@
     <string name="quiz_prompt_body">Посещението ви е изпратено. Вече можете да решите теста за тази забележителност.</string>
     <string name="quiz_take_question_title">%1$d. %2$s</string>
     <string name="quiz_take_submit">Изпрати теста</string>
+    <string name="quiz_take_next">Напред</string>
+    <string name="quiz_take_previous">Назад</string>
+    <string name="quiz_take_progress_label">Въпрос %1$d от %2$d</string>
+    <string name="quiz_take_error_load">Тестът не можа да се зареди.</string>
+    <string name="quiz_take_error_select_answer">Изберете отговор, преди да продължите.</string>
     <string name="quiz_take_error_incomplete">Отговорете на всички въпроси преди изпращане.</string>
     <string name="quiz_take_result_summary">%1$d от %2$d верни</string>
     <string name="quiz_take_result_correct">Въпрос %1$d: вярно. Отговор: %2$s</string>
     <string name="quiz_take_result_incorrect">Въпрос %1$d: грешно. Верен отговор: %2$s</string>
+    <string name="quiz_finish_title">Тестът е завършен</string>
+    <string name="quiz_finish_score">%1$d/%2$d верни · %3$d%%</string>
+    <string name="quiz_finish_answered">%1$d отговорени</string>
+    <string name="quiz_finish_awarded_points">+%1$d XP награда</string>
     <string name="landmark_image_picker_title">Изображение на забележителността</string>
     <string name="landmark_image_picker_preview">Преглед на изображението на забележителността</string>
     <string name="landmark_image_picker_hint">Избраното изображение ще бъде качено при запазване.</string>
@@ -201,4 +210,5 @@
     <string name="nav_landmark_create">Създаване на забележителност</string>
     <string name="nav_quiz_create">Създаване на тест</string>
     <string name="nav_quiz_edit">Редактиране на тест</string>
+    <string name="nav_quiz_take">Решаване на тест</string>
 </resources>

@@ -5,5 +5,6 @@ data class QuizSubmissionResultDTO(
     val totalQuestions: Int,
     val answeredQuestions: Int,
     val correctAnswers: Int,
+    val awardedPoints: Int,
     val results: List<QuizQuestionResultDTO>
 )

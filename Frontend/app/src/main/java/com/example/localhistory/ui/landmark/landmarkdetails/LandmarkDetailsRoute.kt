@@ -38,7 +38,8 @@ fun LandmarkDetailRoute(
     canSubmitVisit: Boolean = false,
     onEdit: (() -> Unit)? = null,
     onCreateQuiz: ((Long) -> Unit)? = null,
-    onEditQuiz: ((Long) -> Unit)? = null
+    onEditQuiz: ((Long) -> Unit)? = null,
+    onTakeQuiz: ((Long) -> Unit)? = null
 ) {
     val viewModel: LandmarkDetailViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -129,11 +130,7 @@ fun LandmarkDetailRoute(
                     isVisitsLoading = state.isVisitsLoading,
                     teacherQuiz = state.teacherQuiz,
                     publicQuiz = state.publicQuiz,
-                    quizAnswers = state.quizAnswers,
-                    quizSubmissionResult = state.quizSubmissionResult,
                     isQuizLoading = state.isQuizLoading,
-                    isQuizSubmitting = state.isQuizSubmitting,
-                    isQuizDialogVisible = state.isQuizDialogVisible,
                     shouldPromptQuiz = state.shouldPromptQuiz,
                     isSubmittingVisit = state.isSubmittingVisit,
                     errorMessage = state.errorMessage,
@@ -161,11 +158,8 @@ fun LandmarkDetailRoute(
                     onDeleteQuiz = state.teacherQuiz?.let { quiz ->
                         { viewModel.deleteTeacherQuiz(quiz.id, landmark.id) }
                     },
-                    onTakeQuiz = viewModel::showQuizDialog,
+                    onTakeQuiz = onTakeQuiz,
                     onDismissQuizPrompt = viewModel::dismissQuizPrompt,
-                    onDismissQuizDialog = viewModel::dismissQuizDialog,
-                    onQuizAnswerChange = viewModel::updateQuizAnswer,
-                    onSubmitQuiz = viewModel::submitQuiz,
                     onDismissVisitMessage = viewModel::dismissVisitMessage,
                     modifier = Modifier.padding(padding)
                 )
