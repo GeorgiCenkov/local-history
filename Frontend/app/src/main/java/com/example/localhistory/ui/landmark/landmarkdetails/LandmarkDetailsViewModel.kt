@@ -2,8 +2,12 @@ package com.example.localhistory.ui.landmark.landmarkdetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.localhistory.R
+import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LandmarkResult
+import com.example.localhistory.data.repository.LocationRepository
+import com.example.localhistory.model.request.LandmarkVisitRequest
 import com.example.localhistory.ui.landmark.TeacherLandmarksUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +19,9 @@ import javax.inject.Inject
 // Use a separate view model from the main TeacherLandmarksViewmodel, so that the details view is reusable between teacher and student
 @HiltViewModel
 class LandmarkDetailViewModel @Inject constructor(
-    private val repository: LandmarkRepository
+    private val repository: LandmarkRepository,
+    private val imageUploadRepository: ImageUploadRepository,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TeacherLandmarksUiState())
@@ -28,7 +34,9 @@ class LandmarkDetailViewModel @Inject constructor(
                 visits = emptyList(),
                 isDetailLoading = true,
                 isVisitsLoading = false,
-                errorMessage = null
+                errorMessage = null,
+                errorMessageRes = null,
+                successMessageRes = null
             )
         }
 
@@ -71,6 +79,81 @@ class LandmarkDetailViewModel @Inject constructor(
                     it.copy(isVisitsLoading = false, errorMessage = result.message)
                 }
             }
+        }
+    }
+
+    // Tries to submit a visit
+    fun submitVisit(landmarkId: Long, imageUri: String) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isSubmittingVisit = true,
+                    errorMessage = null,
+                    errorMessageRes = null,
+                    successMessageRes = null
+                )
+            }
+
+            // A valid visit needs the student's real current location and an uploaded proof image.
+            // Build those first, then send the backend only stable values: landmark id, public image URL, coordinates.
+            val coordinates = when (val locationResult = locationRepository.getCurrentCoordinates()) {
+                is LandmarkResult.Success -> locationResult.data
+                is LandmarkResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            isSubmittingVisit = false,
+                            errorMessageRes = R.string.landmark_visit_error_location
+                        )
+                    }
+                    return@launch
+                }
+            }
+
+            val imageUrl = when (val uploadResult = imageUploadRepository.uploadImage(imageUri)) {
+                is LandmarkResult.Success -> uploadResult.data
+                is LandmarkResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            isSubmittingVisit = false,
+                            errorMessageRes = R.string.landmark_visit_error_upload
+                        )
+                    }
+                    return@launch
+                }
+            }
+
+            val request = LandmarkVisitRequest(
+                landmarkId = landmarkId,
+                image = imageUrl,
+                coordinates = coordinates
+            )
+
+            when (val submitResult = repository.submitVisit(request)) {
+                is LandmarkResult.Success -> _state.update {
+                    it.copy(
+                        visits = listOf(submitResult.data) + it.visits,
+                        isSubmittingVisit = false,
+                        successMessageRes = R.string.landmark_visit_submit_success
+                    )
+                }
+
+                is LandmarkResult.Error -> _state.update {
+                    it.copy(
+                        isSubmittingVisit = false,
+                        errorMessageRes = R.string.landmark_visit_error_submit
+                    )
+                }
+            }
+        }
+    }
+
+    fun reportVisitPermissionDenied() {
+        _state.update {
+            it.copy(
+                errorMessage = null,
+                errorMessageRes = R.string.landmark_visit_error_permissions,
+                successMessageRes = null
+            )
         }
     }
 }

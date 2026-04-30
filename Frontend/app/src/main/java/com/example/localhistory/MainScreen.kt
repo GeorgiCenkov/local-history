@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,11 +43,22 @@ fun MainScreen(
 
     // Derive current screen from the back stack
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = availableScreens.firstOrNull {
-        it.route == currentBackStackEntry?.destination?.route
-    } ?: startDestination
+    val currentRoute = currentBackStackEntry?.destination?.route
+    var currentRootRoute by rememberSaveable { androidx.compose.runtime.mutableStateOf(startDestination.route) }
 
     val bottomRoutes = availableScreens.map { it.route }
+
+    LaunchedEffect(currentRoute) {
+        if (currentRoute in bottomRoutes) {
+            currentRootRoute = currentRoute ?: startDestination.route
+        }
+    }
+
+    // Subpages such as landmark details do not have their own bottom-nav item.
+    // Keep highlighting the root tab that opened them instead of falling back to Home.
+    val currentScreen = availableScreens.firstOrNull { it.route == currentRoute }
+        ?: availableScreens.firstOrNull { it.route == currentRootRoute }
+        ?: startDestination
 
     fun routeIndex(route: String?): Int {
         return bottomRoutes.indexOf(route)
@@ -59,10 +73,10 @@ fun MainScreen(
                 onScreenSelected = { screen ->
                     navController.navigate(screen.route) {
                         popUpTo(startDestination.route) {
-                            saveState = true
+                            saveState = false
                         }
                         launchSingleTop = true
-                        restoreState = true
+                        restoreState = false
                     }
                 }
             )
@@ -183,6 +197,7 @@ fun MainScreen(
                 LandmarkDetailRoute(
                     landmarkId = landmarkId,
                     onBack = { navController.popBackStack() },
+                    canSubmitVisit = user.role == Role.STUDENT,
                     onEdit = if (user.role == Role.TEACHER) {
                         {
                             navController.navigate(Screen.LandmarkEdit.createRoute(landmarkId))

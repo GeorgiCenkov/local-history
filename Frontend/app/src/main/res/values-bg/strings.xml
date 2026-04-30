@@ -41,6 +41,12 @@
     <string name="landmark_visit_user">Ученик #%1$d</string>
     <string name="landmark_visit_date">Посетено на %1$s</string>
     <string name="landmark_visit_image">Снимка от посещение</string>
+    <string name="landmark_visit_submit_action">Отбележи посещение</string>
+    <string name="landmark_visit_submit_success">Посещението е изпратено успешно.</string>
+    <string name="landmark_visit_error_permissions">Необходими са разрешения за камера и местоположение, за да изпратите посещение.</string>
+    <string name="landmark_visit_error_location">Не можахме да вземем текущото ви местоположение. Уверете се, че местоположението е включено, и опитайте отново.</string>
+    <string name="landmark_visit_error_upload">Снимката от посещението не можа да бъде качена. Моля, опитайте отново.</string>
+    <string name="landmark_visit_error_submit">Посещението не можа да бъде изпратено. Моля, опитайте отново.</string>
     <string name="landmark_form_add_title">Добави забележителност</string>
     <string name="landmark_form_edit_title">Редактирай забележителност</string>
     <string name="landmark_field_title">Заглавие</string>

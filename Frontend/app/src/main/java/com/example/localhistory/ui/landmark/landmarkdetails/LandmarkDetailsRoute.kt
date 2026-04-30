@@ -34,6 +34,7 @@ import com.example.localhistory.ui.components.LoadingContent
 fun LandmarkDetailRoute(
     landmarkId: Long,
     onBack: () -> Unit,
+    canSubmitVisit: Boolean = false,
     onEdit: (() -> Unit)? = null
 ) {
     val viewModel: LandmarkDetailViewModel = hiltViewModel()
@@ -107,11 +108,24 @@ fun LandmarkDetailRoute(
                     landmark = landmark,
                     visits = state.visits,
                     isVisitsLoading = state.isVisitsLoading,
+                    isSubmittingVisit = state.isSubmittingVisit,
                     errorMessage = state.errorMessage,
+                    errorMessageRes = state.errorMessageRes,
+                    successMessageRes = state.successMessageRes,
                     onEdit = onEdit,
                     onDelete = null,
                     onRefreshVisits = {
                         viewModel.loadVisits(landmark.id)
+                    },
+                    onSubmitVisitPhoto = if (canSubmitVisit) {
+                        { imageUri -> viewModel.submitVisit(landmark.id, imageUri) }
+                    } else {
+                        null
+                    },
+                    onVisitPermissionDenied = if (canSubmitVisit) {
+                        viewModel::reportVisitPermissionDenied
+                    } else {
+                        null
                     },
                     modifier = Modifier.padding(padding)
                 )

@@ -11,6 +11,7 @@ import com.example.localhistory.data.remote.interceptor.AuthInterceptor
 import com.example.localhistory.data.repository.AuthRepository
 import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
+import com.example.localhistory.data.repository.LocationRepository
 import com.example.localhistory.data.repository.UploadHttpClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -107,4 +108,10 @@ object AppModule {
         api: UploadService,
         @UploadHttpClient uploadHttpClient: OkHttpClient
     ): ImageUploadRepository = ImageUploadRepository(context, api, uploadHttpClient)
+
+    @Provides
+    @Singleton
+    fun provideLocationRepository(
+        @ApplicationContext context: Context
+    ): LocationRepository = LocationRepository(context)
 }

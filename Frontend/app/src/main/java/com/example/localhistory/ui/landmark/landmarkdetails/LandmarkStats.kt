@@ -19,7 +19,7 @@ import com.example.localhistory.model.response.LandmarkDTO
 // Tags ( chips ) for landmark stat like reward points, visit count, and coordinates
 @Composable
 fun LandmarkStats(landmark: LandmarkDTO) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(
                 onClick = {},

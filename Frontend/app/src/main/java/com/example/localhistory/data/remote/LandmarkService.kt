@@ -1,6 +1,7 @@
 package com.example.localhistory.data.remote
 
 import com.example.localhistory.model.request.LandmarkRequest
+import com.example.localhistory.model.request.LandmarkVisitRequest
 import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.model.response.LandmarkVisitDTO
 import retrofit2.Response
@@ -28,6 +29,11 @@ interface LandmarkService {
     suspend fun createLandmark(
         @Body request: LandmarkRequest
     ): Response<LandmarkDTO>
+
+    @POST("api/landmark-visits")
+    suspend fun submitVisit(
+        @Body request: LandmarkVisitRequest
+    ): Response<LandmarkVisitDTO>
 
     @PUT("api/landmarks/{id}")
     suspend fun updateLandmark(

@@ -2,6 +2,7 @@ package com.example.localhistory.data.repository
 
 import com.example.localhistory.data.remote.LandmarkService
 import com.example.localhistory.model.request.LandmarkRequest
+import com.example.localhistory.model.request.LandmarkVisitRequest
 import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.model.response.LandmarkVisitDTO
 
@@ -78,6 +79,18 @@ class LandmarkRepository(
             LandmarkResult.Success(Unit)
         } else {
             LandmarkResult.Error(response.errorBody()?.string() ?: "Could not delete landmark")
+        }
+    }.getOrElse {
+        LandmarkResult.Error(it.message ?: "Network error")
+    }
+
+    suspend fun submitVisit(request: LandmarkVisitRequest): LandmarkResult<LandmarkVisitDTO> = runCatching {
+        val response = api.submitVisit(request)
+        val body = response.body()
+        if (response.isSuccessful && body != null) {
+            LandmarkResult.Success(body)
+        } else {
+            LandmarkResult.Error(response.errorBody()?.string() ?: "Could not submit visit")
         }
     }.getOrElse {
         LandmarkResult.Error(it.message ?: "Network error")

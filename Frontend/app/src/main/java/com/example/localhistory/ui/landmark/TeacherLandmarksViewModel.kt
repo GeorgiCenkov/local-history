@@ -37,9 +37,11 @@ data class TeacherLandmarksUiState(
     val isDetailLoading: Boolean = false,
     val isVisitsLoading: Boolean = false,
     val isSaving: Boolean = false,
+    val isSubmittingVisit: Boolean = false,
     val isFormOpen: Boolean = false,
     val errorMessageRes: Int? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val successMessageRes: Int? = null
 )
 
 

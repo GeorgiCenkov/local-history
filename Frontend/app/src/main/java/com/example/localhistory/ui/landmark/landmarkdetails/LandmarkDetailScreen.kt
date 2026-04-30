@@ -54,10 +54,15 @@ fun LandmarkDetailScreen(
     modifier: Modifier = Modifier,
     visits: List<LandmarkVisitDTO> = emptyList(),
     isVisitsLoading: Boolean = false,
+    isSubmittingVisit: Boolean = false,
     errorMessage: String? = null,
+    errorMessageRes: Int? = null,
+    successMessageRes: Int? = null,
     onEdit: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
-    onRefreshVisits: (() -> Unit)? = null
+    onRefreshVisits: (() -> Unit)? = null,
+    onSubmitVisitPhoto: ((String) -> Unit)? = null,
+    onVisitPermissionDenied: (() -> Unit)? = null
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -69,11 +74,21 @@ fun LandmarkDetailScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        if (errorMessage != null) {
+        if (errorMessageRes != null || errorMessage != null) {
             item {
                 Text(
-                    text = errorMessage,
+                    text = errorMessageRes?.let { stringResource(it) } ?: errorMessage.orEmpty(),
                     color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        if (successMessageRes != null) {
+            item {
+                Text(
+                    text = stringResource(successMessageRes),
+                    color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -144,6 +159,15 @@ fun LandmarkDetailScreen(
                                     }
                                 }
                             }
+                        }
+
+                        if (onSubmitVisitPhoto != null && onVisitPermissionDenied != null) {
+                            VisitPhotoCaptureButton(
+                                isSubmitting = isSubmittingVisit,
+                                onPhotoCaptured = onSubmitVisitPhoto,
+                                onPermissionDenied = onVisitPermissionDenied,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }
