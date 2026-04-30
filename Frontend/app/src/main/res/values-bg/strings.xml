@@ -53,6 +53,10 @@
     <string name="landmark_action_show_map">Покажи на картата</string>
     <string name="landmark_action_open_directions">Отвори маршрута в Google Карти</string>
     <string name="landmark_map_title">Местоположение на забележителността</string>
+    <string name="landmark_filter_label">Търси тук</string>
+    <string name="landmark_filter_placeholder">Търсене по заглавие или описание</string>
+    <string name="landmark_filter_clear">Изчисти филтъра</string>
+    <string name="landmark_filter_no_results">Няма забележителности, които отговарят на този филтър.</string>
     <string name="location_picker_title">Местоположение</string>
     <string name="location_picker_empty">Няма избрано местоположение</string>
     <string name="location_picker_choose">Избери местоположение</string>

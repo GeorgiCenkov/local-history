@@ -52,6 +52,10 @@
     <string name="landmark_action_show_map">Show on map</string>
     <string name="landmark_action_open_directions">Open directions in Google Maps</string>
     <string name="landmark_map_title">Landmark location</string>
+    <string name="landmark_filter_label">Filter landmarks</string>
+    <string name="landmark_filter_placeholder">Search by title or description</string>
+    <string name="landmark_filter_clear">Clear filter</string>
+    <string name="landmark_filter_no_results">No landmarks match this filter.</string>
     <string name="location_picker_title">Location</string>
     <string name="location_picker_empty">No location selected</string>
     <string name="location_picker_choose">Choose location</string>
