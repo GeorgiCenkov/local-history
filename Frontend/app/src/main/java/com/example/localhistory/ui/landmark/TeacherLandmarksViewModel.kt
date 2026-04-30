@@ -144,7 +144,7 @@ class TeacherLandmarksViewModel @Inject constructor(
         _state.update { it.copy(isFormOpen = false, form = LandmarkFormState()) }
     }
 
-    fun saveLandmark() {
+    fun saveLandmark(onSaved: (LandmarkDTO) -> Unit = {}) {
         val form = _state.value.form
         val latitude = form.latitude.toDoubleOrNull()
         val longitude = form.longitude.toDoubleOrNull()
@@ -173,16 +173,32 @@ class TeacherLandmarksViewModel @Inject constructor(
 
             when (result) {
                 is LandmarkResult.Success -> {
-                    // Keep the list fresh from the server so visit counts and IDs stay authoritative.
+                    // The create/edit screens are separate navigation destinations, so they can have
+                    // a different Hilt ViewModel instance from the teacher list. Update this instance
+                    // immediately from the save response, then notify the route only after success.
                     _state.update {
                         val selected = it.selectedLandmark
+                        val savedLandmark = result.data
+                        val updatedLandmarks = if (it.landmarks.any { landmark -> landmark.id == savedLandmark.id }) {
+                            it.landmarks.map { landmark ->
+                                if (landmark.id == savedLandmark.id) savedLandmark else landmark
+                            }
+                        } else {
+                            listOf(savedLandmark) + it.landmarks
+                        }
+
                         it.copy(
-                            selectedLandmark = selected?.takeIf { landmark -> landmark.id != result.data.id } ?: result.data,
+                            landmarks = updatedLandmarks,
+                            selectedLandmark = selected?.takeIf { landmark -> landmark.id != savedLandmark.id }
+                                ?: savedLandmark,
                             isSaving = false,
                             isFormOpen = false,
                             form = LandmarkFormState()
                         )
                     }
+                    onSaved(result.data)
+
+                    // Refresh in the background as a follow-up so server-computed fields stay authoritative.
                     loadLandmarks()
                 }
                 is LandmarkResult.Error -> _state.update {

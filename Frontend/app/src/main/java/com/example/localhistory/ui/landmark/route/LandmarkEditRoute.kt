@@ -34,8 +34,8 @@ fun LandmarkEditRoute(
         onFormChange = viewModel::updateForm,
         onBack = onBack,
         onSave = {
-            viewModel.saveLandmark()
-            onSaved()
+            // Navigate back only after the repository confirms the landmark was updated.
+            viewModel.saveLandmark { onSaved() }
         }
     )
 }

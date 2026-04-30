@@ -16,11 +16,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localhistory.R
 
@@ -35,6 +39,23 @@ fun TeacherLandmarksScreen(
     val viewModel: TeacherLandmarksViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val selectedLandmark = state.selectedLandmark
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner, selectedLandmark?.id) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // Create/edit screens are separate destinations with their own ViewModel instances.
+                // Refresh this screen when it becomes visible again so its list/detail state is current.
+                if (selectedLandmark == null) viewModel.loadLandmarks()
+                else viewModel.refreshSelectedLandmark()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),

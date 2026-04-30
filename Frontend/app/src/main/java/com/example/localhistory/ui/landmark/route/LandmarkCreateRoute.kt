@@ -28,8 +28,9 @@ fun LandmarkCreateRoute(
         onFormChange = viewModel::updateForm,
         onBack = onBack,
         onSave = {
-            viewModel.saveLandmark()
-            onCreated()
+            // Navigate back only after the repository confirms the landmark was created.
+            // Used to make sure the state is updated
+            viewModel.saveLandmark { onCreated() }
         }
     )
 }
