@@ -50,6 +50,9 @@
     <string name="landmark_field_longitude">Географска дължина</string>
     <string name="landmark_field_reward_points">Точки награда</string>
     <string name="landmark_error_invalid_form">Попълнете всички полета с валидни стойности преди запазване.</string>
+    <string name="landmark_action_show_map">Покажи на картата</string>
+    <string name="landmark_action_open_directions">Отвори маршрута в Google Карти</string>
+    <string name="landmark_map_title">Местоположение на забележителността</string>
 
     <!-- Home screen -->
     <string name="home_title">🏠 Начало</string>

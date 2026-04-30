@@ -49,6 +49,9 @@
     <string name="landmark_field_longitude">Longitude</string>
     <string name="landmark_field_reward_points">Reward points</string>
     <string name="landmark_error_invalid_form">Fill every field with valid values before saving.</string>
+    <string name="landmark_action_show_map">Show on map</string>
+    <string name="landmark_action_open_directions">Open directions in Google Maps</string>
+    <string name="landmark_map_title">Landmark location</string>
 
     <!-- Home screen -->
     <string name="home_title">🏠 Home</string>

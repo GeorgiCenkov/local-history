@@ -15,6 +15,9 @@
         android:theme="@style/Theme.LocalHistory"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDDmnWl3ANQ_ZNW5f67o2bIilF9YsV4_Ks"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
