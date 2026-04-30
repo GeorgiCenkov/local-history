@@ -57,6 +57,7 @@ class LandmarkVisitServiceTest {
 
         when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
         when(landmarkRepository.findById(1L)).thenReturn(Optional.of(landmark));
+        when(landmarkVisitRepository.existsByUserIdAndLandmarkId(10L, 1L)).thenReturn(false);
         when(landmarkVisitRepository.save(any(LandmarkVisit.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(mapper.toVisitDTO(any(LandmarkVisit.class))).thenReturn(dto);
 
@@ -73,15 +74,36 @@ class LandmarkVisitServiceTest {
     @Test
     void submitVisitRejectsCoordinatesFartherThanFiftyMeters() {
         Student student = new Student();
+        student.setId(10L);
         Landmark landmark = landmarkAt(1L, 42.697708, 23.321868);
         LandmarkVisitRequest request = requestAt(1L, 42.700000, 23.321868);
 
         when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
         when(landmarkRepository.findById(1L)).thenReturn(Optional.of(landmark));
+        when(landmarkVisitRepository.existsByUserIdAndLandmarkId(10L, 1L)).thenReturn(false);
 
         assertThatThrownBy(() -> service.submitVisit("student@example.com", request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Visit must be submitted within 50 meters of the landmark");
+
+        verify(userService, never()).awardPoints(anyLong(), anyInt());
+        verify(landmarkVisitRepository, never()).save(any());
+    }
+
+    @Test
+    void submitVisitRejectsDuplicateVisitForSameStudentAndLandmark() {
+        Student student = new Student();
+        student.setId(10L);
+        Landmark landmark = landmarkAt(1L, 42.697708, 23.321868);
+        LandmarkVisitRequest request = requestAt(1L, 42.697800, 23.321950);
+
+        when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(student));
+        when(landmarkRepository.findById(1L)).thenReturn(Optional.of(landmark));
+        when(landmarkVisitRepository.existsByUserIdAndLandmarkId(10L, 1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.submitVisit("student@example.com", request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("User has already submitted a visit for this landmark");
 
         verify(userService, never()).awardPoints(anyLong(), anyInt());
         verify(landmarkVisitRepository, never()).save(any());

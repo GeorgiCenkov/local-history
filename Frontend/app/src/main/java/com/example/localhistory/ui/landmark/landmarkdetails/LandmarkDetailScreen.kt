@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.CardDefaults
@@ -26,6 +27,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -42,8 +45,12 @@ import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.model.response.LandmarkVisitDTO
+import com.example.localhistory.model.response.PublicQuizDTO
+import com.example.localhistory.model.response.QuizDTO
+import com.example.localhistory.model.response.QuizSubmissionResultDTO
 import com.example.localhistory.ui.components.LoadingContent
 import com.example.localhistory.ui.components.NetworkImage
+import com.example.localhistory.ui.quiz.TakeQuizDialog
 import kotlinx.coroutines.launch
 import java.util.Collections.emptyList
 
@@ -54,7 +61,16 @@ fun LandmarkDetailScreen(
     landmark: LandmarkDTO,
     modifier: Modifier = Modifier,
     visits: List<LandmarkVisitDTO> = emptyList(),
+    currentUserId: Long? = null,
+    teacherQuiz: QuizDTO? = null,
+    publicQuiz: PublicQuizDTO? = null,
+    quizAnswers: Map<Long, String> = emptyMap(),
+    quizSubmissionResult: QuizSubmissionResultDTO? = null,
     isVisitsLoading: Boolean = false,
+    isQuizLoading: Boolean = false,
+    isQuizSubmitting: Boolean = false,
+    isQuizDialogVisible: Boolean = false,
+    shouldPromptQuiz: Boolean = false,
     isSubmittingVisit: Boolean = false,
     errorMessage: String? = null,
     errorMessageRes: Int? = null,
@@ -62,6 +78,14 @@ fun LandmarkDetailScreen(
     onEdit: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
     onRefreshVisits: (() -> Unit)? = null,
+    onCreateQuiz: (() -> Unit)? = null,
+    onEditQuiz: ((Long) -> Unit)? = null,
+    onDeleteQuiz: (() -> Unit)? = null,
+    onTakeQuiz: (() -> Unit)? = null,
+    onDismissQuizPrompt: () -> Unit = {},
+    onDismissQuizDialog: () -> Unit = {},
+    onQuizAnswerChange: (Long, String) -> Unit = { _, _ -> },
+    onSubmitQuiz: () -> Unit = {},
     onSubmitVisitPhoto: ((String) -> Unit)? = null,
     onVisitPermissionDenied: (() -> Unit)? = null,
     onDismissVisitMessage: () -> Unit = {}
@@ -69,6 +93,8 @@ fun LandmarkDetailScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var isMapSheetVisible by remember { mutableStateOf(false) }
+    val hasSubmittedVisit = currentUserId != null && visits.any { it.userId == currentUserId }
+    val canTakePublicQuiz = onTakeQuiz != null && hasSubmittedVisit && publicQuiz != null
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -171,6 +197,95 @@ fun LandmarkDetailScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
+
+                        if (canTakePublicQuiz) {
+                            Spacer(Modifier.height(10.dp))
+
+                            Button(
+                                onClick = { onTakeQuiz?.invoke() },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Outlined.Quiz, contentDescription = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.quiz_take_action))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // If a teacher is accessing this, show the quiz management section
+        if (onCreateQuiz != null) {
+            item {
+                ElevatedCard(
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(Icons.Outlined.Quiz, contentDescription = null)
+                            Text(
+                                text = stringResource(R.string.quiz_section_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+
+                        when {
+                            isQuizLoading -> CircularProgressIndicator()
+
+                            teacherQuiz == null -> {
+                                Text(
+                                    text = stringResource(R.string.quiz_empty_for_landmark),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                FilledTonalButton(onClick = onCreateQuiz) {
+                                    Text(stringResource(R.string.quiz_action_create))
+                                }
+                            }
+
+                            else -> {
+                                Text(
+                                    text = teacherQuiz.title,
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+
+                                Text(
+                                    text = stringResource(
+                                        R.string.quiz_question_count,
+                                        teacherQuiz.questions.size
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    FilledTonalButton(
+                                        onClick = { onEditQuiz?.invoke(teacherQuiz.id) }
+                                    ) {
+                                        Icon(Icons.Outlined.Edit, contentDescription = null)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(stringResource(R.string.action_edit))
+                                    }
+
+                                    TextButton(onClick = { onDeleteQuiz?.invoke() }) {
+                                        Icon(Icons.Outlined.Delete, contentDescription = null)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(stringResource(R.string.action_delete))
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -242,7 +357,7 @@ fun LandmarkDetailScreen(
         }
     }
 
-    if (errorMessageRes != null) {
+    if (errorMessageRes != null && !isQuizDialogVisible) {
         AlertDialog(
             onDismissRequest = onDismissVisitMessage,
             title = {
@@ -256,6 +371,42 @@ fun LandmarkDetailScreen(
                     Text(stringResource(R.string.action_ok))
                 }
             }
+        )
+    }
+
+    if (shouldPromptQuiz && canTakePublicQuiz) {
+        AlertDialog(
+            onDismissRequest = onDismissQuizPrompt,
+            title = {
+                Text(stringResource(R.string.quiz_prompt_title))
+            },
+            text = {
+                Text(stringResource(R.string.quiz_prompt_body))
+            },
+            confirmButton = {
+                Button(onClick = { onTakeQuiz?.invoke() }) {
+                    Text(stringResource(R.string.quiz_take_action))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissQuizPrompt) {
+                    Text(stringResource(R.string.action_later))
+                }
+            }
+        )
+    }
+
+    if (isQuizDialogVisible && publicQuiz != null) {
+        TakeQuizDialog(
+            quiz = publicQuiz,
+            answers = quizAnswers,
+            result = quizSubmissionResult,
+            isSubmitting = isQuizSubmitting,
+            errorMessage = errorMessage,
+            errorMessageRes = errorMessageRes,
+            onAnswerChange = onQuizAnswerChange,
+            onSubmit = onSubmitQuiz,
+            onDismiss = onDismissQuizDialog
         )
     }
 }

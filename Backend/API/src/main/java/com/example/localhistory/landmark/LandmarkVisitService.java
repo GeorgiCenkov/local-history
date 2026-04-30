@@ -33,7 +33,9 @@ public class LandmarkVisitService {
         Landmark landmark = landmarkRepository.findById(request.getLandmarkId())
                 .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + request.getLandmarkId()));
 
-        validateVisitIsNearLandmark(request.getCoordinates(), landmark.getCoordinates());
+        // Disable during development TODO: Re-enable
+        // validateVisitIsNotDuplicate(student.getId(), landmark.getId());
+        // validateVisitIsNearLandmark(request.getCoordinates(), landmark.getCoordinates());
 
         LandmarkVisit visit = new LandmarkVisit();
         visit.setUser(student);
@@ -63,6 +65,12 @@ public class LandmarkVisitService {
         }
 
         throw new IllegalArgumentException("Only students can submit landmark visits");
+    }
+
+    private void validateVisitIsNotDuplicate(Long studentId, Long landmarkId) {
+        if (landmarkVisitRepository.existsByUserIdAndLandmarkId(studentId, landmarkId)) {
+            throw new IllegalArgumentException("User has already submitted a visit for this landmark");
+        }
     }
 
     private void validateVisitIsNearLandmark(Coordinates visitCoordinates, Coordinates landmarkCoordinates) {

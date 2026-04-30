@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.remote.AuthService
 import com.example.localhistory.data.remote.LandmarkService
+import com.example.localhistory.data.remote.QuizService
 import com.example.localhistory.data.remote.UploadService
 import com.example.localhistory.data.remote.adapter.LocalDateAdapter
 import com.example.localhistory.data.remote.adapter.LocalDateTimeAdapter
@@ -13,6 +14,7 @@ import com.example.localhistory.data.repository.AuthRepository
 import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LocationRepository
+import com.example.localhistory.data.repository.QuizRepository
 import com.example.localhistory.data.repository.UploadHttpClient
 import com.example.localhistory.model.response.User
 import com.google.gson.Gson
@@ -89,6 +91,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideQuizService(retrofit: Retrofit): QuizService =
+        retrofit.create(QuizService::class.java)
+
+    @Provides
+    @Singleton
     fun provideUploadService(retrofit: Retrofit): UploadService =
         retrofit.create(UploadService::class.java)
 
@@ -103,6 +110,11 @@ object AppModule {
     @Singleton
     fun provideLandmarkRepository(api: LandmarkService): LandmarkRepository =
         LandmarkRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideQuizRepository(api: QuizService): QuizRepository =
+        QuizRepository(api)
 
     @Provides
     @Singleton

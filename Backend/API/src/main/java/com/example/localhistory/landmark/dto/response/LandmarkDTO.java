@@ -16,4 +16,5 @@ public class LandmarkDTO {
     private Long ownerId;
     private Integer visitRewardPoints;
     private Integer visitsCount;
+    private Long quizId;
 }

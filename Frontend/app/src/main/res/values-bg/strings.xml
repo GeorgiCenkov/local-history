@@ -17,6 +17,8 @@
     <string name="action_refresh">Обнови</string>
     <string name="action_save">Запази</string>
     <string name="action_ok">OK</string>
+    <string name="action_done">Готово</string>
+    <string name="action_later">По-късно</string>
     <string name="action_view">Преглед</string>
     <string name="common_unknown">Неизвестно</string>
 
@@ -71,6 +73,32 @@
     <string name="landmark_action_show_map">Покажи на картата</string>
     <string name="landmark_action_open_directions">Отвори маршрута в Google Карти</string>
     <string name="landmark_map_title">Местоположение на забележителността</string>
+    <string name="quiz_section_title">Тест</string>
+    <string name="quiz_empty_for_landmark">Все още няма тест към тази забележителност.</string>
+    <string name="quiz_action_create">Създай тест</string>
+    <string name="quiz_question_count">%1$d въпроса</string>
+    <string name="quiz_delete_success">Тестът е изтрит.</string>
+    <string name="quiz_form_create_title">Създай тест</string>
+    <string name="quiz_form_edit_title">Редактирай тест</string>
+    <string name="quiz_field_title">Заглавие на теста</string>
+    <string name="quiz_field_question">Въпрос</string>
+    <string name="quiz_field_option">Опция %1$d</string>
+    <string name="quiz_field_correct_answer">Верен отговор</string>
+    <string name="quiz_question_label">Въпрос %1$d</string>
+    <string name="quiz_action_add_question">Добави въпрос</string>
+    <string name="quiz_action_delete_question">Изтрий въпрос</string>
+    <string name="quiz_action_add_option">Добави опция</string>
+    <string name="quiz_action_delete_option">Изтрий опция</string>
+    <string name="quiz_error_invalid_form">Въведете заглавие, поне един въпрос, поне две опции за всеки въпрос и верен отговор, който съвпада точно с една от опциите.</string>
+    <string name="quiz_take_action">Реши теста</string>
+    <string name="quiz_prompt_title">Готови ли сте за теста?</string>
+    <string name="quiz_prompt_body">Посещението ви е изпратено. Вече можете да решите теста за тази забележителност.</string>
+    <string name="quiz_take_question_title">%1$d. %2$s</string>
+    <string name="quiz_take_submit">Изпрати теста</string>
+    <string name="quiz_take_error_incomplete">Отговорете на всички въпроси преди изпращане.</string>
+    <string name="quiz_take_result_summary">%1$d от %2$d верни</string>
+    <string name="quiz_take_result_correct">Въпрос %1$d: вярно. Отговор: %2$s</string>
+    <string name="quiz_take_result_incorrect">Въпрос %1$d: грешно. Верен отговор: %2$s</string>
     <string name="landmark_image_picker_title">Изображение на забележителността</string>
     <string name="landmark_image_picker_preview">Преглед на изображението на забележителността</string>
     <string name="landmark_image_picker_hint">Избраното изображение ще бъде качено при запазване.</string>
@@ -171,4 +199,6 @@
     <string name="nav_landmark_detail">Детайли за забележителност</string>
     <string name="nav_landmark_edit">Редактиране на забележителност</string>
     <string name="nav_landmark_create">Създаване на забележителност</string>
+    <string name="nav_quiz_create">Създаване на тест</string>
+    <string name="nav_quiz_edit">Редактиране на тест</string>
 </resources>

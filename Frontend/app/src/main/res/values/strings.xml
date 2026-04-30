@@ -16,6 +16,8 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_save">Save</string>
     <string name="action_ok">OK</string>
+    <string name="action_done">Done</string>
+    <string name="action_later">Later</string>
     <string name="action_view">View</string>
     <string name="common_unknown">Unknown</string>
 
@@ -70,6 +72,32 @@
     <string name="landmark_action_show_map">Show on map</string>
     <string name="landmark_action_open_directions">Open directions in Google Maps</string>
     <string name="landmark_map_title">Landmark location</string>
+    <string name="quiz_section_title">Quiz</string>
+    <string name="quiz_empty_for_landmark">No quiz is assigned to this landmark yet.</string>
+    <string name="quiz_action_create">Create quiz</string>
+    <string name="quiz_question_count">%1$d questions</string>
+    <string name="quiz_delete_success">Quiz deleted.</string>
+    <string name="quiz_form_create_title">Create quiz</string>
+    <string name="quiz_form_edit_title">Edit quiz</string>
+    <string name="quiz_field_title">Quiz title</string>
+    <string name="quiz_field_question">Question</string>
+    <string name="quiz_field_option">Option %1$d</string>
+    <string name="quiz_field_correct_answer">Correct answer</string>
+    <string name="quiz_question_label">Question %1$d</string>
+    <string name="quiz_action_add_question">Add question</string>
+    <string name="quiz_action_delete_question">Delete question</string>
+    <string name="quiz_action_add_option">Add option</string>
+    <string name="quiz_action_delete_option">Delete option</string>
+    <string name="quiz_error_invalid_form">Enter a title, at least one question, at least two options per question, and make each correct answer match one option exactly.</string>
+    <string name="quiz_take_action">Take quiz</string>
+    <string name="quiz_prompt_title">Ready for the quiz?</string>
+    <string name="quiz_prompt_body">Your visit was submitted. You can now take the quiz for this landmark.</string>
+    <string name="quiz_take_question_title">%1$d. %2$s</string>
+    <string name="quiz_take_submit">Submit quiz</string>
+    <string name="quiz_take_error_incomplete">Answer every question before submitting.</string>
+    <string name="quiz_take_result_summary">%1$d of %2$d correct</string>
+    <string name="quiz_take_result_correct">Question %1$d: correct. Answer: %2$s</string>
+    <string name="quiz_take_result_incorrect">Question %1$d: incorrect. Correct answer: %2$s</string>
     <string name="landmark_image_picker_title">Landmark image</string>
     <string name="landmark_image_picker_preview">Landmark image preview</string>
     <string name="landmark_image_picker_hint">The selected image will be uploaded when you save.</string>
@@ -174,4 +202,6 @@
     <string name="nav_landmark_detail">Landmark details</string>
     <string name="nav_landmark_edit">Edit landmark</string>
     <string name="nav_landmark_create">Create landmark</string>
+    <string name="nav_quiz_create">Create quiz</string>
+    <string name="nav_quiz_edit">Edit quiz</string>
 </resources>

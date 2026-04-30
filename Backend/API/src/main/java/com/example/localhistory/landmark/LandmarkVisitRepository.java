@@ -12,4 +12,6 @@ public interface LandmarkVisitRepository extends JpaRepository<LandmarkVisit, Lo
     List<LandmarkVisit> findByLandmarkIdAndLandmarkOwnerEmail(Long landmarkId, String ownerEmail);
 
     Optional<LandmarkVisit> findByIdAndLandmarkOwnerEmail(Long id, String ownerEmail);
+
+    boolean existsByUserIdAndLandmarkId(Long userId, Long landmarkId);
 }

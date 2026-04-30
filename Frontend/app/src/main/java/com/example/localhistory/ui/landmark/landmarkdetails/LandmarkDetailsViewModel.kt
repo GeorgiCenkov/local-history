@@ -8,7 +8,10 @@ import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LandmarkResult
 import com.example.localhistory.data.repository.LocationRepository
+import com.example.localhistory.data.repository.QuizRepository
 import com.example.localhistory.model.request.LandmarkVisitRequest
+import com.example.localhistory.model.request.QuizQuestionAnswerRequest
+import com.example.localhistory.model.request.QuizSubmissionRequest
 import com.example.localhistory.ui.landmark.TeacherLandmarksUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +26,8 @@ class LandmarkDetailViewModel @Inject constructor(
     private val repository: LandmarkRepository,
     private val imageUploadRepository: ImageUploadRepository,
     private val locationRepository: LocationRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val quizRepository: QuizRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TeacherLandmarksUiState())
@@ -34,8 +38,16 @@ class LandmarkDetailViewModel @Inject constructor(
             it.copy(
                 selectedLandmark = null,
                 visits = emptyList(),
+                teacherQuiz = null,
+                publicQuiz = null,
+                quizAnswers = emptyMap(),
+                quizSubmissionResult = null,
                 isDetailLoading = true,
                 isVisitsLoading = false,
+                isQuizLoading = false,
+                isQuizSubmitting = false,
+                isQuizDialogVisible = false,
+                shouldPromptQuiz = false,
                 errorMessage = null,
                 errorMessageRes = null,
                 successMessageRes = null
@@ -81,6 +93,73 @@ class LandmarkDetailViewModel @Inject constructor(
                     it.copy(isVisitsLoading = false, errorMessage = result.message)
                 }
             }
+        }
+    }
+
+    fun loadTeacherQuiz(landmarkId: Long) {
+        viewModelScope.launch {
+            _state.update { it.copy(isQuizLoading = true) }
+
+            when (val result = quizRepository.getTeacherQuizByLandmarkId(landmarkId)) {
+                is LandmarkResult.Success -> _state.update {
+                    it.copy(teacherQuiz = result.data, isQuizLoading = false)
+                }
+
+                is LandmarkResult.Error -> _state.update {
+                    it.copy(isQuizLoading = false, errorMessage = result.message)
+                }
+            }
+        }
+    }
+
+    fun loadPublicQuiz(landmarkId: Long) {
+        viewModelScope.launch {
+            _state.update { it.copy(isQuizLoading = true) }
+
+            when (val result = quizRepository.getPublicQuizByLandmarkId(landmarkId)) {
+                is LandmarkResult.Success -> _state.update {
+                    it.copy(
+                        publicQuiz = result.data,
+                        quizAnswers = result.data?.questions?.associate { question ->
+                            question.id to (it.quizAnswers[question.id] ?: "")
+                        }.orEmpty(),
+                        isQuizLoading = false
+                    )
+                }
+
+                is LandmarkResult.Error -> _state.update {
+                    it.copy(isQuizLoading = false, errorMessage = result.message)
+                }
+            }
+        }
+    }
+
+    fun deleteTeacherQuiz(quizId: Long, landmarkId: Long) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isQuizLoading = true,
+                    errorMessage = null,
+                    errorMessageRes = null,
+                    successMessageRes = null
+                )
+            }
+
+            when (val result = quizRepository.deleteQuiz(quizId)) {
+                is LandmarkResult.Success -> _state.update {
+                    it.copy(
+                        teacherQuiz = null,
+                        isQuizLoading = false,
+                        successMessageRes = R.string.quiz_delete_success
+                    )
+                }
+
+                is LandmarkResult.Error -> _state.update {
+                    it.copy(isQuizLoading = false, errorMessage = result.message)
+                }
+            }
+
+            loadTeacherQuiz(landmarkId)
         }
     }
 
@@ -141,9 +220,11 @@ class LandmarkDetailViewModel @Inject constructor(
                         it.copy(
                             visits = listOf(submitResult.data) + it.visits,
                             isSubmittingVisit = false,
+                            shouldPromptQuiz = true,
                             successMessageRes = R.string.landmark_visit_submit_success
                         )
                     }
+                    loadPublicQuiz(landmarkId)
                 }
 
                 is LandmarkResult.Error -> _state.update {
@@ -176,7 +257,87 @@ class LandmarkDetailViewModel @Inject constructor(
         }
     }
 
-    // if the error message cotnains "within 50 meters", it's the out of range error, otherwise it's a generic submit error
+    fun showQuizDialog() {
+        _state.update {
+            it.copy(
+                isQuizDialogVisible = true,
+                shouldPromptQuiz = false,
+                quizSubmissionResult = null,
+                errorMessage = null,
+                errorMessageRes = null
+            )
+        }
+    }
+
+    fun dismissQuizPrompt() {
+        _state.update { it.copy(shouldPromptQuiz = false) }
+    }
+
+    fun dismissQuizDialog() {
+        _state.update {
+            it.copy(
+                isQuizDialogVisible = false,
+                shouldPromptQuiz = false,
+                quizSubmissionResult = null,
+                errorMessage = null,
+                errorMessageRes = null
+            )
+        }
+    }
+
+    fun updateQuizAnswer(questionId: Long, answer: String) {
+        _state.update {
+            it.copy(
+                quizAnswers = it.quizAnswers + (questionId to answer),
+                errorMessage = null,
+                errorMessageRes = null
+            )
+        }
+    }
+
+    fun submitQuiz() {
+        val quiz = _state.value.publicQuiz ?: return
+        val answers = quiz.questions.map { question ->
+            QuizQuestionAnswerRequest(
+                questionId = question.id,
+                answer = _state.value.quizAnswers[question.id].orEmpty()
+            )
+        }
+
+        if (answers.any { it.answer.isBlank() }) {
+            _state.update { it.copy(errorMessageRes = R.string.quiz_take_error_incomplete) }
+            return
+        }
+
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isQuizSubmitting = true,
+                    quizSubmissionResult = null,
+                    errorMessage = null,
+                    errorMessageRes = null
+                )
+            }
+
+            when (val result = quizRepository.submitQuiz(quiz.id, QuizSubmissionRequest(answers))) {
+                is LandmarkResult.Success -> _state.update {
+                    it.copy(
+                        isQuizSubmitting = false,
+                        quizSubmissionResult = result.data
+                    )
+                }
+
+                is LandmarkResult.Error -> _state.update {
+                    it.copy(
+                        isQuizSubmitting = false,
+                        errorMessage = result.message
+                    )
+                }
+            }
+        }
+    }
+
+    // Backend validation returns this phrase for visits outside the configured radius.
     private fun String.toVisitSubmitErrorRes(): Int =
         if (contains("within 50 meters", ignoreCase = true)) {
             R.string.landmark_visit_error_out_of_range

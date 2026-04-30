@@ -27,4 +27,18 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
         "landmark_create",
         R.string.nav_landmark_create
     )
+
+    data object QuizCreate : Screen(
+        "quiz_create/{landmarkId}",
+        R.string.nav_quiz_create
+    ) {
+        fun createRoute(landmarkId: Long) = "quiz_create/$landmarkId"
+    }
+
+    data object QuizEdit : Screen(
+        "quiz_edit/{quizId}",
+        R.string.nav_quiz_edit
+    ) {
+        fun createRoute(quizId: Long) = "quiz_edit/$quizId"
+    }
 }

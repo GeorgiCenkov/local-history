@@ -31,6 +31,8 @@ import com.example.localhistory.ui.landmark.landmarkdetails.LandmarkDetailRoute
 import com.example.localhistory.ui.landmark.route.LandmarkCreateRoute
 import com.example.localhistory.ui.landmark.route.LandmarkEditRoute
 import com.example.localhistory.ui.profile.ProfileScreen
+import com.example.localhistory.ui.quiz.QuizCreateRoute
+import com.example.localhistory.ui.quiz.QuizEditRoute
 
 @Composable
 fun MainScreen(
@@ -196,12 +198,23 @@ fun MainScreen(
 
                 LandmarkDetailRoute(
                     landmarkId = landmarkId,
+                    currentUserId = user.id,
                     onBack = { navController.popBackStack() },
                     canSubmitVisit = user.role == Role.STUDENT,
                     onEdit = if (user.role == Role.TEACHER) {
                         {
                             navController.navigate(Screen.LandmarkEdit.createRoute(landmarkId))
                         }
+                    } else {
+                        null
+                    },
+                    onCreateQuiz = if (user.role == Role.TEACHER) {
+                        { id -> navController.navigate(Screen.QuizCreate.createRoute(id)) }
+                    } else {
+                        null
+                    },
+                    onEditQuiz = if (user.role == Role.TEACHER) {
+                        { quizId -> navController.navigate(Screen.QuizEdit.createRoute(quizId)) }
                     } else {
                         null
                     }
@@ -225,6 +238,32 @@ fun MainScreen(
                 LandmarkCreateRoute (
                     onBack = { navController.popBackStack() },
                     onCreated = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.QuizCreate.route) { backStackEntry ->
+                val landmarkId = backStackEntry.arguments
+                    ?.getString("landmarkId")
+                    ?.toLongOrNull()
+                    ?: return@composable
+
+                QuizCreateRoute(
+                    landmarkId = landmarkId,
+                    onBack = { navController.popBackStack() },
+                    onCreated = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.QuizEdit.route) { backStackEntry ->
+                val quizId = backStackEntry.arguments
+                    ?.getString("quizId")
+                    ?.toLongOrNull()
+                    ?: return@composable
+
+                QuizEditRoute(
+                    quizId = quizId,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() }
                 )
             }
 

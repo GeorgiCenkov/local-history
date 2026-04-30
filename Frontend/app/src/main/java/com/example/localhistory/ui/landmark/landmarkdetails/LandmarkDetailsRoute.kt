@@ -33,9 +33,12 @@ import com.example.localhistory.ui.components.LoadingContent
 @Composable
 fun LandmarkDetailRoute(
     landmarkId: Long,
+    currentUserId: Long,
     onBack: () -> Unit,
     canSubmitVisit: Boolean = false,
-    onEdit: (() -> Unit)? = null
+    onEdit: (() -> Unit)? = null,
+    onCreateQuiz: ((Long) -> Unit)? = null,
+    onEditQuiz: ((Long) -> Unit)? = null
 ) {
     val viewModel: LandmarkDetailViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,12 +48,27 @@ fun LandmarkDetailRoute(
         viewModel.openLandmarkById(landmarkId)
     }
 
+    LaunchedEffect(landmarkId, onCreateQuiz != null) {
+        if (onCreateQuiz != null) {
+            viewModel.loadTeacherQuiz(landmarkId)
+        }
+    }
+
+    LaunchedEffect(landmarkId, canSubmitVisit) {
+        if (canSubmitVisit) {
+            viewModel.loadPublicQuiz(landmarkId)
+        }
+    }
+
     DisposableEffect(lifecycleOwner, landmarkId) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 // Returning from edit should show the saved landmark, not the detail payload
                 // that was loaded before navigation.
                 viewModel.openLandmarkById(landmarkId)
+                if (onCreateQuiz != null) {
+                    viewModel.loadTeacherQuiz(landmarkId)
+                }
             }
         }
 
@@ -107,7 +125,16 @@ fun LandmarkDetailRoute(
                 LandmarkDetailScreen(
                     landmark = landmark,
                     visits = state.visits,
+                    currentUserId = currentUserId,
                     isVisitsLoading = state.isVisitsLoading,
+                    teacherQuiz = state.teacherQuiz,
+                    publicQuiz = state.publicQuiz,
+                    quizAnswers = state.quizAnswers,
+                    quizSubmissionResult = state.quizSubmissionResult,
+                    isQuizLoading = state.isQuizLoading,
+                    isQuizSubmitting = state.isQuizSubmitting,
+                    isQuizDialogVisible = state.isQuizDialogVisible,
+                    shouldPromptQuiz = state.shouldPromptQuiz,
                     isSubmittingVisit = state.isSubmittingVisit,
                     errorMessage = state.errorMessage,
                     errorMessageRes = state.errorMessageRes,
@@ -127,6 +154,18 @@ fun LandmarkDetailRoute(
                     } else {
                         null
                     },
+                    onCreateQuiz = onCreateQuiz?.let {
+                        { it(landmark.id) }
+                    },
+                    onEditQuiz = onEditQuiz,
+                    onDeleteQuiz = state.teacherQuiz?.let { quiz ->
+                        { viewModel.deleteTeacherQuiz(quiz.id, landmark.id) }
+                    },
+                    onTakeQuiz = viewModel::showQuizDialog,
+                    onDismissQuizPrompt = viewModel::dismissQuizPrompt,
+                    onDismissQuizDialog = viewModel::dismissQuizDialog,
+                    onQuizAnswerChange = viewModel::updateQuizAnswer,
+                    onSubmitQuiz = viewModel::submitQuiz,
                     onDismissVisitMessage = viewModel::dismissVisitMessage,
                     modifier = Modifier.padding(padding)
                 )

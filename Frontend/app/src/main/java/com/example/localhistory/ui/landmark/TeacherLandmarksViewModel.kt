@@ -10,6 +10,9 @@ import com.example.localhistory.data.repository.LandmarkResult
 import com.example.localhistory.model.request.LandmarkRequest
 import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.model.response.LandmarkVisitDTO
+import com.example.localhistory.model.response.PublicQuizDTO
+import com.example.localhistory.model.response.QuizDTO
+import com.example.localhistory.model.response.QuizSubmissionResultDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,10 +35,18 @@ data class TeacherLandmarksUiState(
     val landmarks: List<LandmarkDTO> = emptyList(),
     val selectedLandmark: LandmarkDTO? = null,
     val visits: List<LandmarkVisitDTO> = emptyList(),
+    val teacherQuiz: QuizDTO? = null,
+    val publicQuiz: PublicQuizDTO? = null,
+    val quizAnswers: Map<Long, String> = emptyMap(),
+    val quizSubmissionResult: QuizSubmissionResultDTO? = null,
     val form: LandmarkFormState = LandmarkFormState(),
     val isLoading: Boolean = false,
     val isDetailLoading: Boolean = false,
     val isVisitsLoading: Boolean = false,
+    val isQuizLoading: Boolean = false,
+    val isQuizSubmitting: Boolean = false,
+    val isQuizDialogVisible: Boolean = false,
+    val shouldPromptQuiz: Boolean = false,
     val isSaving: Boolean = false,
     val isSubmittingVisit: Boolean = false,
     val isFormOpen: Boolean = false,
