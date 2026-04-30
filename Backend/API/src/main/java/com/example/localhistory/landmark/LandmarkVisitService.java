@@ -5,6 +5,7 @@ import com.example.localhistory.landmark.dto.response.LandmarkVisitDTO;
 import com.example.localhistory.landmark.model.Landmark;
 import com.example.localhistory.landmark.model.LandmarkVisit;
 import com.example.localhistory.user.UserRepository;
+import com.example.localhistory.user.UserService;
 import com.example.localhistory.user.model.Student;
 import com.example.localhistory.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,6 +20,7 @@ public class LandmarkVisitService {
     private final LandmarkRepository landmarkRepository;
     private final LandmarkVisitRepository landmarkVisitRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final LandmarkMapper mapper;
 
     //TODO: add validation that the request is coming from a place near enough
@@ -35,7 +37,7 @@ public class LandmarkVisitService {
         visit.setCoordinates(request.getCoordinates());
 
         // Award points to user
-        student.setPoints((student.getPoints() == null ? 0 : student.getPoints()) + landmark.getVisitRewardPoints());
+        userService.awardPoints(student.getId(), landmark.getVisitRewardPoints());
 
         return mapper.toVisitDTO(landmarkVisitRepository.save(visit));
     }
