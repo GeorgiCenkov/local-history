@@ -25,6 +25,7 @@ import com.example.localhistory.model.response.LandmarkDTO
 import com.example.localhistory.ui.components.CoordinateDisplay
 import androidx.core.net.toUri
 
+
 @Composable
 fun LandmarkMapSheetContent(
     landmark: LandmarkDTO,
@@ -45,7 +46,7 @@ fun LandmarkMapSheetContent(
         )
 
         Box(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp)
         ) {

@@ -34,7 +34,7 @@ public class LandmarkVisitService {
                 .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + request.getLandmarkId()));
 
         // Disable during development TODO: Re-enable
-        // validateVisitIsNotDuplicate(student.getId(), landmark.getId());
+        validateVisitIsNotDuplicate(student.getId(), landmark.getId());
         // validateVisitIsNearLandmark(request.getCoordinates(), landmark.getCoordinates());
 
         LandmarkVisit visit = new LandmarkVisit();

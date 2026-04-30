@@ -17,6 +17,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -44,7 +45,14 @@ fun LocationPicker(
     val selectedLocation = remember(latitude, longitude) {
         parseLocation(latitude, longitude)
     }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue ->
+            newValue == SheetValue.Hidden // Disable gestures to not confuse the coordinate display
+        }
+    )
+    
     val scope = rememberCoroutineScope()
     var isPickerVisible by remember { mutableStateOf(false) }
 

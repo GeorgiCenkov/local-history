@@ -3,8 +3,8 @@ package com.example.localhistory.ui.components
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -33,7 +33,7 @@ fun CoordinateDisplay(
     }
     val markerState = rememberMarkerState(position = location)
 
-    LaunchedEffect(location, zoom) {
+    LaunchedEffect(latitude, longitude, zoom) {
         markerState.position = location
         cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(location, zoom))
     }
@@ -42,7 +42,8 @@ fun CoordinateDisplay(
         shape = RoundedCornerShape(16.dp)
     ) {
         GoogleMap(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize(),
             cameraPositionState = cameraPositionState,
             onMapClick = { onMapClick?.invoke(it) }
         ) {
@@ -55,3 +56,4 @@ fun CoordinateDisplay(
         }
     }
 }
+
