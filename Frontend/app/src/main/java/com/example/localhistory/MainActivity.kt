@@ -19,6 +19,10 @@ import com.example.localhistory.ui.theme.AppThemeState
 import com.example.localhistory.ui.theme.LocalAppThemeState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -41,7 +45,12 @@ class MainActivity : ComponentActivity() {
                 )
             ) {
                 LocalHistoryTheme(darkTheme = isDark) {
-                    App()
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        App()
+                    }
 
                     SideEffect {
                         window.statusBarColor = Color.Transparent.toArgb()

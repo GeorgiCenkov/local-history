@@ -36,8 +36,12 @@ class LocationRepository(
             .maxByOrNull { location -> location.time }
 
         val location = lastKnown ?: runCatching {
-            withTimeoutOrNull(10_000) {
-                requestSingleLocation(locationManager, providers.first())
+            withTimeoutOrNull(15_000) {
+                // Network provider usually returns faster immediately after the user grants
+                // location permission; GPS can be slow on the first attempt.
+                val provider = providers.firstOrNull { it == LocationManager.NETWORK_PROVIDER }
+                    ?: providers.first()
+                requestSingleLocation(locationManager, provider)
             }
         }.getOrNull()
 

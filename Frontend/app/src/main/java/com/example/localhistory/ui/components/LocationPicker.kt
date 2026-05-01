@@ -107,7 +107,8 @@ fun LocationPicker(
             onConfirm = { location ->
                 onLocationPicked(location.latitude, location.longitude)
                 isPickerVisible = false
-            }
+            },
+            onCancel = { isPickerVisible = false }
         )
     }
 }

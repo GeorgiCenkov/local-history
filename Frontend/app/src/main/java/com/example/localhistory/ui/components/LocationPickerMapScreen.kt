@@ -25,7 +25,8 @@ import com.google.maps.android.compose.rememberMarkerState
 @Composable
 fun LocationPickerMapScreen(
     initialLocation: LatLng?,
-    onConfirm: (LatLng) -> Unit
+    onConfirm: (LatLng) -> Unit,
+    onCancel: () -> Unit
 ) {
     var pickedLocation by remember(initialLocation) { mutableStateOf(initialLocation) }
     val mapLocation = pickedLocation ?: defaultLocationPickerMapLocation()
@@ -75,6 +76,7 @@ fun LocationPickerMapScreen(
                 pickedLocation = pickedLocation,
                 onLocationFound = { pickedLocation = it },
                 onConfirm = { pickedLocation?.let(onConfirm) },
+                onCancel = onCancel,
                 backgroundColor = backgroundColor
             )
         }

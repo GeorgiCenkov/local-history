@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +39,7 @@ fun BoxScope.LocationPickerLockedSheet(
     pickedLocation: LatLng?,
     onLocationFound: (LatLng) -> Unit,
     onConfirm: () -> Unit,
+    onCancel: () -> Unit,
     backgroundColor: Int
 ) {
     val context = LocalContext.current
@@ -119,6 +121,7 @@ fun BoxScope.LocationPickerLockedSheet(
             }
 
             Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -134,6 +137,10 @@ fun BoxScope.LocationPickerLockedSheet(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
                 )
+
+                TextButton(onClick = onCancel) {
+                    Text(stringResource(R.string.action_cancel))
+                }
 
                 Button(
                     onClick = onConfirm,
