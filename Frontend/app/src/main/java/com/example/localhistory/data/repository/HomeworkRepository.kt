@@ -27,6 +27,17 @@ class HomeworkRepository(
         HomeworkResult.Error(it.message ?: "Network error")
     }
 
+    suspend fun getStudentAssignments(): HomeworkResult<List<HomeworkAssignmentDTO>> = runCatching {
+        val response = api.getStudentAssignments()
+        if (response.isSuccessful) {
+            HomeworkResult.Success(response.body().orEmpty())
+        } else {
+            HomeworkResult.Error(response.errorBody()?.string() ?: "Could not load homework")
+        }
+    }.getOrElse {
+        HomeworkResult.Error(it.message ?: "Network error")
+    }
+
     suspend fun createHomework(request: HomeworkRequest): HomeworkResult<HomeworkDTO> = runCatching {
         val response = api.createHomework(request)
         val body = response.body()
@@ -79,6 +90,18 @@ class HomeworkRepository(
             HomeworkResult.Success(response.body().orEmpty())
         } else {
             HomeworkResult.Error(response.errorBody()?.string() ?: "Could not assign homework")
+        }
+    }.getOrElse {
+        HomeworkResult.Error(it.message ?: "Network error")
+    }
+
+    suspend fun completeAssignment(id: Long): HomeworkResult<HomeworkAssignmentDTO> = runCatching {
+        val response = api.completeAssignment(id)
+        val body = response.body()
+        if (response.isSuccessful && body != null) {
+            HomeworkResult.Success(body)
+        } else {
+            HomeworkResult.Error(response.errorBody()?.string() ?: "Could not complete homework")
         }
     }.getOrElse {
         HomeworkResult.Error(it.message ?: "Network error")

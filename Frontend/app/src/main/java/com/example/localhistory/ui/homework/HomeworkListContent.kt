@@ -35,7 +35,7 @@ fun HomeworkListContent(
 
         when {
             state.isLoading && state.homework.isEmpty() -> LoadingContent()
-            state.homework.isEmpty() -> EmptyHomework(onCreate = onCreate)
+            state.homework.isEmpty() -> EmptyHomework(onAction = onCreate)
             else -> LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.fillMaxSize()

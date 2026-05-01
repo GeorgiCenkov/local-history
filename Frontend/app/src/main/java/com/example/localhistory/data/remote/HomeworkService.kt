@@ -18,6 +18,9 @@ interface HomeworkService {
     @GET("api/homework/teacher")
     suspend fun getTeacherHomework(): Response<List<HomeworkDTO>>
 
+    @GET("api/homework/student")
+    suspend fun getStudentAssignments(): Response<List<HomeworkAssignmentDTO>>
+
     @POST("api/homework")
     suspend fun createHomework(
         @Body request: HomeworkRequest
@@ -44,6 +47,11 @@ interface HomeworkService {
         @Path("id") id: Long,
         @Body request: HomeworkAssignmentRequest
     ): Response<List<HomeworkAssignmentDTO>>
+
+    @POST("api/homework/assignments/{id}/complete")
+    suspend fun completeAssignment(
+        @Path("id") id: Long
+    ): Response<HomeworkAssignmentDTO>
 
     @GET("api/users/search")
     suspend fun searchStudents(

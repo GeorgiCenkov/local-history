@@ -178,7 +178,14 @@ fun MainScreen(
                 if (user.role == Role.TEACHER) {
                     HomeworkScreen()
                 } else {
-                    StudentHomeworkScreen()
+                    StudentHomeworkScreen(
+                        onOpenLandmark = { landmarkId ->
+                            navController.navigate(Screen.LandmarkDetail.createRoute(landmarkId))
+                        },
+                        onTakeQuiz = { quizId ->
+                            navController.navigate(Screen.QuizTake.createRoute(quizId))
+                        }
+                    )
                 }
             }
 

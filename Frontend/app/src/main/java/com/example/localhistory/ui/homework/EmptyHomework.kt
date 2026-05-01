@@ -23,9 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 
-// Empty state shown before a teacher creates their first homework task.
+// Reusable homework empty state for teacher management and student assignment lists.
 @Composable
-fun EmptyHomework(onCreate: () -> Unit) {
+fun EmptyHomework(
+    title: String = stringResource(R.string.homework_empty_title),
+    body: String = stringResource(R.string.homework_empty_body),
+    actionText: String? = stringResource(R.string.homework_action_add),
+    onAction: (() -> Unit)? = null
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,22 +46,24 @@ fun EmptyHomework(onCreate: () -> Unit) {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.homework_empty_title),
+            text = title,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.homework_empty_body),
+            text = body,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(20.dp))
-        Button(onClick = onCreate) {
-            Icon(Icons.Outlined.Add, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.homework_action_add))
+        if (onAction != null && actionText != null) {
+            Spacer(Modifier.height(20.dp))
+            Button(onClick = onAction) {
+                Icon(Icons.Outlined.Add, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(actionText)
+            }
         }
     }
 }
