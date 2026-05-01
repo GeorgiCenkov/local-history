@@ -31,6 +31,7 @@ import com.example.localhistory.ui.landmark.TeacherLandmarksScreen
 import com.example.localhistory.ui.landmark.landmarkdetails.LandmarkDetailRoute
 import com.example.localhistory.ui.landmark.route.LandmarkCreateRoute
 import com.example.localhistory.ui.landmark.route.LandmarkEditRoute
+import com.example.localhistory.ui.leaderboard.LeaderboardScreen
 import com.example.localhistory.ui.profile.ProfileScreen
 import com.example.localhistory.ui.quiz.QuizCreateRoute
 import com.example.localhistory.ui.quiz.QuizEditRoute
@@ -163,7 +164,18 @@ fun MainScreen(
             }
         ) {
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    user = user,
+                    onOpenDiscover = {
+                        navController.navigate(Screen.Discover.route)
+                    },
+                    onOpenHomework = {
+                        navController.navigate(Screen.Homework.route)
+                    },
+                    onOpenLeaderboard = {
+                        navController.navigate(Screen.Leaderboard.route)
+                    }
+                )
             }
 
             composable(Screen.Discover.route) {
@@ -290,6 +302,12 @@ fun MainScreen(
 
                 QuizTakeRoute(
                     quizId = quizId,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.Leaderboard.route) {
+                LeaderboardScreen(
                     onBack = { navController.popBackStack() }
                 )
             }

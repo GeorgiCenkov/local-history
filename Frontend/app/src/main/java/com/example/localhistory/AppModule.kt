@@ -7,6 +7,7 @@ import com.example.localhistory.data.remote.HomeworkService
 import com.example.localhistory.data.remote.LandmarkService
 import com.example.localhistory.data.remote.QuizService
 import com.example.localhistory.data.remote.UploadService
+import com.example.localhistory.data.remote.UserService
 import com.example.localhistory.data.remote.adapter.LocalDateAdapter
 import com.example.localhistory.data.remote.adapter.LocalDateTimeAdapter
 import com.example.localhistory.data.remote.adapter.UserAdapter
@@ -18,6 +19,7 @@ import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LocationRepository
 import com.example.localhistory.data.repository.QuizRepository
 import com.example.localhistory.data.repository.UploadHttpClient
+import com.example.localhistory.data.repository.UserRepository
 import com.example.localhistory.model.response.User
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -108,6 +110,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService =
+        retrofit.create(UserService::class.java)
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
         api: AuthService,
         authDataStore: AuthDataStore
@@ -127,6 +134,11 @@ object AppModule {
     @Singleton
     fun provideHomeworkRepository(api: HomeworkService): HomeworkRepository =
         HomeworkRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(api: UserService): UserRepository =
+        UserRepository(api)
 
     @Provides
     @Singleton

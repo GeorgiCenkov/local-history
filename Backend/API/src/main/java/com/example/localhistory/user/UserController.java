@@ -1,9 +1,11 @@
 package com.example.localhistory.user;
 
+import com.example.localhistory.user.dto.response.StudentLeaderboardDTO;
 import com.example.localhistory.user.dto.response.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,5 +28,24 @@ public class UserController {
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<List<UserDTO>> searchStudents(@RequestParam(defaultValue = "") String search) {
         return ResponseEntity.ok(userService.searchStudents(search));
+    }
+
+    /**
+     * GET /api/users/leaderboard?search=value — ranked students, optionally filtered by search.
+     */
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<StudentLeaderboardDTO>> getLeaderboard(
+            @RequestParam(defaultValue = "") String search,
+            Authentication authentication) {
+        return ResponseEntity.ok(userService.getLeaderboard(authentication.getName(), search));
+    }
+
+    /**
+     * GET /api/users/leaderboard/me — the authenticated student's global leaderboard row.
+     */
+    @GetMapping("/leaderboard/me")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<StudentLeaderboardDTO> getMyLeaderboardRow(Authentication authentication) {
+        return ResponseEntity.ok(userService.getCurrentStudentLeaderboardRow(authentication.getName()));
     }
 }

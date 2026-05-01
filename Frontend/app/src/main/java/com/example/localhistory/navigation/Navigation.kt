@@ -8,6 +8,7 @@ sealed class Screen(val route: String, @StringRes val labelRes: Int) {
     data object Homework    : Screen("homework",    R.string.nav_homework)
     data object TeacherLandmarks : Screen("teacher_landmarks", R.string.nav_landmarks)
     data object Profile : Screen("profile", R.string.nav_profile)
+    data object Leaderboard : Screen("leaderboard", R.string.nav_leaderboard)
 
     data object LandmarkDetail : Screen(
         "landmark_detail/{landmarkId}",

@@ -22,9 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.localhistory.ui.home.languages
 import com.example.localhistory.utils.currentLanguage
 
+data class Language(val code: String, val label: String)
+
+val languages = listOf(
+    Language("en", "English"),
+    Language("bg", "Български"),
+)
+
+// Dropdown for switching the app language and recreating the current Activity.
 @Composable
 fun LanguageToggle() {
     var expanded by remember { mutableStateOf(false) }

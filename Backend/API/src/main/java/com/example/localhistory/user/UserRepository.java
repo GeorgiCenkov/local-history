@@ -1,6 +1,7 @@
 package com.example.localhistory.user;
 
 import com.example.localhistory.user.model.User;
+import com.example.localhistory.user.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
             order by u.firstName asc, u.lastName asc, u.email asc
             """)
     List<User> searchStudents(@Param("search") String search);
+
+    @Query("""
+            select s from Student s
+            order by coalesce(s.level, 1) desc,
+                     coalesce(s.points, 0) desc,
+                     s.firstName asc,
+                     s.lastName asc,
+                     s.email asc
+            """)
+    List<Student> findStudentsForLeaderboard();
 }

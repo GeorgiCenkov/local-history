@@ -7,6 +7,7 @@
     <string name="nav_homework">Homework</string>
     <string name="nav_landmarks">Landmarks</string>
     <string name="nav_profile">Profile</string>
+    <string name="nav_leaderboard">Leaderboard</string>
 
     <!-- Shared actions -->
     <string name="action_back">Back</string>
@@ -133,8 +134,20 @@
     <string name="location_picker_confirm">Use location</string>
 
     <!-- Home screen -->
-    <string name="home_title">🏠 Home</string>
-    <string name="home_subtitle">Welcome to the home screen</string>
+    <string name="home_title">Home</string>
+    <string name="home_welcome">Hi, %1$s</string>
+    <string name="home_welcome_body">Keep exploring landmarks, finish assignments, and climb the leaderboard.</string>
+    <string name="home_homework_title">Homework</string>
+    <string name="home_homework_clear">No unfinished homework right now.</string>
+    <string name="home_homework_pending">%1$d unfinished · %2$d overdue</string>
+    <string name="home_open_homework">Open homework</string>
+    <string name="home_leaderboard_title">Global leaderboard</string>
+    <string name="home_leaderboard_rank">Rank #%1$d · Lv %2$d · %3$d XP</string>
+    <string name="home_leaderboard_loading">Loading your rank…</string>
+    <string name="home_open_leaderboard">Open leaderboard</string>
+    <string name="home_discover_title">Discover places</string>
+    <string name="home_discover_body">Find nearby landmarks, submit visits, and unlock quizzes.</string>
+    <string name="home_open_discover">Explore landmarks</string>
     <string name="discover_title">Discover Landmarks</string>
     <string name="discover_subtitle">%1$d places with stories worth exploring</string>
     <string name="discover_empty_title">No landmarks available</string>
@@ -266,4 +279,9 @@
     <string name="nav_quiz_create">Create quiz</string>
     <string name="nav_quiz_edit">Edit quiz</string>
     <string name="nav_quiz_take">Take quiz</string>
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="leaderboard_search">Search by name or email</string>
+    <string name="leaderboard_find_me">Find me</string>
+    <string name="leaderboard_my_rank">Your rank: #%1$d</string>
+    <string name="leaderboard_level_points">Lv %1$d · %2$d XP</string>
 </resources>

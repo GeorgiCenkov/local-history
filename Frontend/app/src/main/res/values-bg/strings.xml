@@ -8,6 +8,7 @@
     <string name="nav_homework">Домашно</string>
     <string name="nav_landmarks">Забележителности</string>
     <string name="nav_profile">Профил</string>
+    <string name="nav_leaderboard">Класация</string>
 
     <!-- Shared actions -->
     <string name="action_back">Назад</string>
@@ -134,8 +135,20 @@
     <string name="location_picker_confirm">Използвай местоположението</string>
 
     <!-- Home screen -->
-    <string name="home_title">🏠 Начало</string>
-    <string name="home_subtitle">Добре дошли в началния екран</string>
+    <string name="home_title">Начало</string>
+    <string name="home_welcome">Здравей, %1$s</string>
+    <string name="home_welcome_body">Откривай забележителности, завършвай домашни и се изкачвай в класацията.</string>
+    <string name="home_homework_title">Домашни</string>
+    <string name="home_homework_clear">В момента няма незавършени домашни.</string>
+    <string name="home_homework_pending">%1$d незавършени · %2$d просрочени</string>
+    <string name="home_open_homework">Отвори домашни</string>
+    <string name="home_leaderboard_title">Глобална класация</string>
+    <string name="home_leaderboard_rank">Място #%1$d · Ниво %2$d · %3$d XP</string>
+    <string name="home_leaderboard_loading">Зареждане на мястото ви…</string>
+    <string name="home_open_leaderboard">Отвори класацията</string>
+    <string name="home_discover_title">Открий места</string>
+    <string name="home_discover_body">Намери забележителности, изпращай посещения и отключвай тестове.</string>
+    <string name="home_open_discover">Разгледай забележителности</string>
     <string name="discover_title">Открий забележителности</string>
     <string name="discover_subtitle">%1$d места с истории, които си заслужава да изследвате</string>
     <string name="discover_empty_title">Няма налични забележителности</string>
@@ -263,4 +276,9 @@
     <string name="nav_quiz_create">Създаване на тест</string>
     <string name="nav_quiz_edit">Редактиране на тест</string>
     <string name="nav_quiz_take">Решаване на тест</string>
+    <string name="leaderboard_title">Класация</string>
+    <string name="leaderboard_search">Търсене по име или имейл</string>
+    <string name="leaderboard_find_me">Намери ме</string>
+    <string name="leaderboard_my_rank">Вашето място: #%1$d</string>
+    <string name="leaderboard_level_points">Ниво %1$d · %2$d XP</string>
 </resources>
