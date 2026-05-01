@@ -3,6 +3,7 @@ package com.example.localhistory
 import android.content.Context
 import com.example.localhistory.data.datastore.AuthDataStore
 import com.example.localhistory.data.remote.AuthService
+import com.example.localhistory.data.remote.HomeworkService
 import com.example.localhistory.data.remote.LandmarkService
 import com.example.localhistory.data.remote.QuizService
 import com.example.localhistory.data.remote.UploadService
@@ -11,6 +12,7 @@ import com.example.localhistory.data.remote.adapter.LocalDateTimeAdapter
 import com.example.localhistory.data.remote.adapter.UserAdapter
 import com.example.localhistory.data.remote.interceptor.AuthInterceptor
 import com.example.localhistory.data.repository.AuthRepository
+import com.example.localhistory.data.repository.HomeworkRepository
 import com.example.localhistory.data.repository.ImageUploadRepository
 import com.example.localhistory.data.repository.LandmarkRepository
 import com.example.localhistory.data.repository.LocationRepository
@@ -101,6 +103,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideHomeworkService(retrofit: Retrofit): HomeworkService =
+        retrofit.create(HomeworkService::class.java)
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
         api: AuthService,
         authDataStore: AuthDataStore
@@ -115,6 +122,11 @@ object AppModule {
     @Singleton
     fun provideQuizRepository(api: QuizService): QuizRepository =
         QuizRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideHomeworkRepository(api: HomeworkService): HomeworkRepository =
+        HomeworkRepository(api)
 
     @Provides
     @Singleton

@@ -26,6 +26,7 @@ import com.example.localhistory.ui.components.BottomNavBar
 import com.example.localhistory.ui.discover.DiscoverScreen
 import com.example.localhistory.ui.home.HomeScreen
 import com.example.localhistory.ui.homework.HomeworkScreen
+import com.example.localhistory.ui.homework.StudentHomeworkScreen
 import com.example.localhistory.ui.landmark.TeacherLandmarksScreen
 import com.example.localhistory.ui.landmark.landmarkdetails.LandmarkDetailRoute
 import com.example.localhistory.ui.landmark.route.LandmarkCreateRoute
@@ -174,7 +175,11 @@ fun MainScreen(
             }
 
             composable(Screen.Homework.route) {
-                HomeworkScreen()
+                if (user.role == Role.TEACHER) {
+                    HomeworkScreen()
+                } else {
+                    StudentHomeworkScreen()
+                }
             }
 
             composable(Screen.TeacherLandmarks.route) {

@@ -12,5 +12,6 @@ data class LandmarkDTO(
     val coordinates: Coordinates,
     val ownerId: Long?,
     val visitRewardPoints: Int,
-    val visitsCount: Int
+    val visitsCount: Int,
+    val quizId: Long? = null
 )

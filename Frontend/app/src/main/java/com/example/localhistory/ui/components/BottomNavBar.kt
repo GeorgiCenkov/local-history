@@ -29,6 +29,7 @@
 
     val teacherScreens = listOf(
         Screen.TeacherLandmarks,
+        Screen.Homework,
         Screen.Profile
     )
 
