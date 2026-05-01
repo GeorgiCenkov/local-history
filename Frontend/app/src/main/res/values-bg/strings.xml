@@ -20,6 +20,7 @@
     <string name="action_done">Готово</string>
     <string name="action_later">По-късно</string>
     <string name="action_view">Преглед</string>
+    <string name="action_select_date">Избери дата</string>
     <string name="common_unknown">Неизвестно</string>
 
     <!-- Profile -->

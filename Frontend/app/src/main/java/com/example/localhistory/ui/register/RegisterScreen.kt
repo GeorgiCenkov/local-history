@@ -41,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localhistory.R
 import com.example.localhistory.model.response.Role
+import com.example.localhistory.ui.components.DatePickerField
 import kotlinx.datetime.LocalDate
 
 data class RegisterUiState(
@@ -224,15 +225,12 @@ fun RegisterScreen(
         Spacer(Modifier.height(12.dp))
 
         // ── Birth date ────────────────────────────────────────────────────────
-        OutlinedTextField(
+        DatePickerField(
             value = state.birthDate,
-            onValueChange = { state = state.copy(birthDate = it, birthDateError = null) },
-            label = { Text(stringResource(R.string.register_birth_date)) },
-            placeholder = { Text(stringResource(R.string.date_placeholder)) },
-            singleLine = true,
+            onValueChange = { selectedDate -> state = state.copy(birthDate = selectedDate, birthDateError = null) },
+            label = stringResource(R.string.register_birth_date),
             isError = state.birthDateError != null,
             supportingText = state.birthDateError?.let { msg -> { Text(msg, color = MaterialTheme.colorScheme.error) } },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
 

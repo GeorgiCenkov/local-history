@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 public interface QuizCompletionRepository extends JpaRepository<QuizCompletion, Long> {
     boolean existsByStudentIdAndQuizId(Long studentId, Long quizId);
 
+    void deleteByQuizLandmarkId(Long landmarkId);
+
     boolean existsByStudentIdAndQuizIdAndCompletedAtLessThanEqual(
             Long studentId,
             Long quizId,

@@ -11,4 +11,6 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     List<Homework> findByTeacherEmail(String teacherEmail);
 
     Optional<Homework> findByIdAndTeacherEmail(Long id, String teacherEmail);
+
+    void deleteByLandmarkId(Long landmarkId);
 }

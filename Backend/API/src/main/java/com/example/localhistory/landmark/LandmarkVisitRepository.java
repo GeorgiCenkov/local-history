@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface LandmarkVisitRepository extends JpaRepository<LandmarkVisit, Long> {
     List<LandmarkVisit> findByLandmarkId(Long landmarkId);
 
+    void deleteByLandmarkId(Long landmarkId);
+
     List<LandmarkVisit> findByLandmarkIdAndLandmarkOwnerEmail(Long landmarkId, String ownerEmail);
 
     Optional<LandmarkVisit> findByIdAndLandmarkOwnerEmail(Long id, String ownerEmail);

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -32,11 +31,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.example.localhistory.model.response.LandmarkDTO
+import com.example.localhistory.ui.components.DatePickerField
 
 // Form used by teachers to create a landmark-based homework task.
 @Composable
@@ -71,13 +70,10 @@ fun HomeworkForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
+        DatePickerField(
             value = state.form.dueDate,
             onValueChange = { onFormChange(state.form.copy(dueDate = it)) },
-            label = { Text(stringResource(R.string.homework_field_due_date)) },
-            placeholder = { Text(stringResource(R.string.date_placeholder)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            label = stringResource(R.string.homework_field_due_date),
             modifier = Modifier.fillMaxWidth()
         )
 

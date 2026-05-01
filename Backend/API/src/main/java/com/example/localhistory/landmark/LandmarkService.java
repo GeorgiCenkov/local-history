@@ -5,6 +5,10 @@ import com.example.localhistory.landmark.dto.response.LandmarkDTO;
 import com.example.localhistory.landmark.dto.response.LandmarkVisitDTO;
 import com.example.localhistory.landmark.model.Landmark;
 import com.example.localhistory.landmark.model.LandmarkVisit;
+import com.example.localhistory.homework.HomeworkAssignmentRepository;
+import com.example.localhistory.homework.HomeworkRepository;
+import com.example.localhistory.quiz.QuizCompletionRepository;
+import com.example.localhistory.quiz.QuizRepository;
 import com.example.localhistory.user.UserRepository;
 import com.example.localhistory.user.model.Teacher;
 import com.example.localhistory.user.model.User;
@@ -21,6 +25,10 @@ public class LandmarkService {
 
     private final LandmarkRepository landmarkRepository;
     private final LandmarkVisitRepository landmarkVisitRepository;
+    private final QuizCompletionRepository quizCompletionRepository;
+    private final QuizRepository quizRepository;
+    private final HomeworkAssignmentRepository homeworkAssignmentRepository;
+    private final HomeworkRepository homeworkRepository;
     private final UserRepository userRepository;
     private final LandmarkMapper mapper;
 
@@ -71,7 +79,17 @@ public class LandmarkService {
     /** Permanently removes a landmark. Throws 404 if the ID is unknown. */
     @Transactional
     public void deleteLandmark(String teacherEmail, Long id) {
-        landmarkRepository.delete(findLandmarkForTeacherOrThrow(teacherEmail, id));
+        Landmark landmark = findLandmarkForTeacherOrThrow(teacherEmail, id);
+        Long landmarkId = landmark.getId();
+
+        // Dependent rows hold foreign keys to the landmark or its quiz, so remove
+        // them from the leaves inward before deleting the landmark row.
+        landmarkVisitRepository.deleteByLandmarkId(landmarkId);
+        homeworkAssignmentRepository.deleteByHomeworkLandmarkId(landmarkId);
+        homeworkRepository.deleteByLandmarkId(landmarkId);
+        quizCompletionRepository.deleteByQuizLandmarkId(landmarkId);
+        quizRepository.deleteByLandmarkId(landmarkId);
+        landmarkRepository.delete(landmark);
     }
 
     /** Returns all visits recorded against a specific landmark. */

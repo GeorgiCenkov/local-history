@@ -14,6 +14,8 @@ public interface HomeworkAssignmentRepository extends JpaRepository<HomeworkAssi
 
     List<HomeworkAssignment> findByStudentEmail(String studentEmail);
 
+    void deleteByHomeworkLandmarkId(Long landmarkId);
+
     Optional<HomeworkAssignment> findByIdAndStudentEmail(Long id, String studentEmail);
 
     Optional<HomeworkAssignment> findByHomeworkIdAndStudentId(Long homeworkId, Long studentId);

@@ -12,5 +12,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     Optional<Quiz> findByIdAndLandmarkOwnerEmail(Long id, String ownerEmail);
 
+    void deleteByLandmarkId(Long landmarkId);
+
     boolean existsByLandmarkId(Long landmarkId);
 }
