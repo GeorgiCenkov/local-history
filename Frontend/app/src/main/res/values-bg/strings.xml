@@ -129,10 +129,14 @@
     <string name="location_picker_choose">Избери местоположение</string>
     <string name="location_picker_change">Промени местоположението</string>
     <string name="location_picker_sheet_title">Избери местоположение</string>
-    <string name="location_picker_hint">Докоснете място на картата, за да зададете координатите на забележителността.</string>
+    <string name="location_picker_hint">Потърсете място или докоснете картата, за да зададете координатите на забележителността.</string>
     <string name="location_picker_marker_title">Избрано местоположение</string>
     <string name="location_picker_no_selection">Докоснете картата, за да изберете местоположение.</string>
     <string name="location_picker_confirm">Използвай местоположението</string>
+    <string name="location_picker_search_label">Търсене на местоположение</string>
+    <string name="location_picker_search_placeholder">Град, адрес или забележителност</string>
+    <string name="location_picker_search_action">Търси</string>
+    <string name="location_picker_search_error">Местоположението не беше намерено.</string>
 
     <!-- Home screen -->
     <string name="home_title">Начало</string>

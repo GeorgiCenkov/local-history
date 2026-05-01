@@ -12,29 +12,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.localhistory.R
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.launch
 
 // Reusable landmark / coordinates picker
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationPicker(
     latitude: String,
@@ -46,14 +39,6 @@ fun LocationPicker(
         parseLocation(latitude, longitude)
     }
 
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue ->
-            newValue == SheetValue.Hidden // Disable gestures to not confuse the coordinate display
-        }
-    )
-
-    val scope = rememberCoroutineScope()
     var isPickerVisible by remember { mutableStateOf(false) }
 
     ElevatedCard(
@@ -115,23 +100,15 @@ fun LocationPicker(
         }
     }
 
-    // Display the bottom sheet for picking a location
+    // Display a dedicated full-screen picker so the map has enough space.
     if (isPickerVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { isPickerVisible = false },
-            sheetState = sheetState
-        ) {
-            LocationPickerSheetContent(
-                initialLocation = selectedLocation,
-                onConfirm = { location ->
-                    onLocationPicked(location.latitude, location.longitude)
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        isPickerVisible = false
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
+        LocationPickerMapScreen(
+            initialLocation = selectedLocation,
+            onConfirm = { location ->
+                onLocationPicked(location.latitude, location.longitude)
+                isPickerVisible = false
+            }
+        )
     }
 }
 
