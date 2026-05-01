@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="1777621800000-1" author="codex">
+        <createSequence incrementBy="50" sequenceName="homework_seq" startValue="1"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-2" author="codex">
+        <createSequence incrementBy="50" sequenceName="homework_assignments_seq" startValue="1"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-3" author="codex">
+        <createTable tableName="homework">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_homework"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="require_visit" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="require_quiz" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="landmark_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacher_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1777621800000-4" author="codex">
+        <createTable tableName="homework_assignments">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_homework_assignments"/>
+            </column>
+            <column name="homework_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="student_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1777621800000-5" author="codex">
+        <addUniqueConstraint columnNames="homework_id, student_id"
+                             constraintName="uc_homework_assignments_homework_student"
+                             tableName="homework_assignments"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-6" author="codex">
+        <addForeignKeyConstraint baseColumnNames="landmark_id" baseTableName="homework"
+                                 constraintName="FK_HOMEWORK_ON_LANDMARK" referencedColumnNames="id"
+                                 referencedTableName="landmarks"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-7" author="codex">
+        <addForeignKeyConstraint baseColumnNames="teacher_id" baseTableName="homework"
+                                 constraintName="FK_HOMEWORK_ON_TEACHER" referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-8" author="codex">
+        <addForeignKeyConstraint baseColumnNames="homework_id" baseTableName="homework_assignments"
+                                 constraintName="FK_HOMEWORK_ASSIGNMENTS_ON_HOMEWORK" referencedColumnNames="id"
+                                 referencedTableName="homework"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-9" author="codex">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="homework_assignments"
+                                 constraintName="FK_HOMEWORK_ASSIGNMENTS_ON_STUDENT" referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="1777621800000-10" author="codex">
+        <addColumn tableName="homework_assignments">
+            <column name="completed_at" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

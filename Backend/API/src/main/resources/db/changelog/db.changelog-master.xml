@@ -10,4 +10,5 @@
     <include file="db/changelog/landmark-owner.xml" context=""/>
     <include file="db/changelog/quiz-completions.xml"/>
     <include file="db/changelog/quiz-completion.xml"/>
+    <include file="db/changelog/homework.xml"/>
 </databaseChangeLog>

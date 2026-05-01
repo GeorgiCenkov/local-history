@@ -2,23 +2,38 @@ package com.example.localhistory.user;
 
 import com.example.localhistory.user.model.Student;
 import com.example.localhistory.user.model.User;
+import com.example.localhistory.user.dto.response.UserDTO;
+import com.example.localhistory.user.mapper.UserMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 //TODO Add logic for safely handling awarding points
+// Service for user-related operations shared by auth, progress, and teacher student search.
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     public void CreateUser(){
         throw new NotImplementedException();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> searchStudents(String search) {
+        return userRepository.searchStudents(search == null ? "" : search.trim())
+                .stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     @Transactional
