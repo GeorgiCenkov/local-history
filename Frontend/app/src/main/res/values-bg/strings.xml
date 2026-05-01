@@ -176,11 +176,15 @@
     <string name="homework_status_ready">Готово за отбелязване</string>
     <string name="homework_status_overdue">Просрочено</string>
     <string name="homework_status_pending">В процес</string>
+    <string name="homework_due_label">До %1$s</string>
     <string name="homework_open_landmark">Отвори забележителността</string>
+    <string name="homework_open_landmark_for_quiz">Отвори забележителността за теста</string>
     <string name="homework_take_quiz">Реши теста</string>
     <string name="homework_mark_complete">Отбележи като завършено</string>
     <string name="homework_visit_progress">Посещението е изпратено</string>
     <string name="homework_quiz_progress">Тестът е завършен</string>
+    <string name="homework_requirement_done">Готово</string>
+    <string name="homework_requirement_pending">Все още не е готово</string>
     <string name="homework_student_complete_success">Домашното е отбелязано като завършено.</string>
     <string name="homework_student_complete_error">Завършете изискваното посещение или тест преди да отбележите домашното като завършено.</string>
     <string name="homework_student_quiz_load_error">Тестът за това домашно не можа да се отвори.</string>

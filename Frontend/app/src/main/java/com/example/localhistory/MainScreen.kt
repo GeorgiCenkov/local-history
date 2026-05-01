@@ -181,9 +181,6 @@ fun MainScreen(
                     StudentHomeworkScreen(
                         onOpenLandmark = { landmarkId ->
                             navController.navigate(Screen.LandmarkDetail.createRoute(landmarkId))
-                        },
-                        onTakeQuiz = { quizId ->
-                            navController.navigate(Screen.QuizTake.createRoute(quizId))
                         }
                     )
                 }

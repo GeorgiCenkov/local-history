@@ -175,11 +175,15 @@
     <string name="homework_status_ready">Ready to mark complete</string>
     <string name="homework_status_overdue">Overdue</string>
     <string name="homework_status_pending">Pending</string>
+    <string name="homework_due_label">Due %1$s</string>
     <string name="homework_open_landmark">Open landmark</string>
+    <string name="homework_open_landmark_for_quiz">Open landmark to take quiz</string>
     <string name="homework_take_quiz">Take quiz</string>
     <string name="homework_mark_complete">Mark complete</string>
     <string name="homework_visit_progress">Visit submitted</string>
     <string name="homework_quiz_progress">Quiz completed</string>
+    <string name="homework_requirement_done">Done</string>
+    <string name="homework_requirement_pending">Not done yet</string>
     <string name="homework_student_complete_success">Homework marked complete.</string>
     <string name="homework_student_complete_error">Complete the required visit or quiz before marking this homework complete.</string>
     <string name="homework_student_quiz_load_error">Could not open the quiz for this homework.</string>

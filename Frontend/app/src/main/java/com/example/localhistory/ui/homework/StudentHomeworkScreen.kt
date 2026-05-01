@@ -28,8 +28,7 @@ import com.example.localhistory.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentHomeworkScreen(
-    onOpenLandmark: (Long) -> Unit,
-    onTakeQuiz: (Long) -> Unit
+    onOpenLandmark: (Long) -> Unit
 ) {
     val viewModel: StudentHomeworkViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -73,9 +72,6 @@ fun StudentHomeworkScreen(
             StudentHomeworkContent(
                 state = state,
                 onOpenLandmark = onOpenLandmark,
-                onTakeQuiz = { assignment ->
-                    viewModel.openQuizForAssignment(assignment, onTakeQuiz)
-                },
                 onComplete = viewModel::completeAssignment
             )
         }
