@@ -33,9 +33,9 @@ public class LandmarkVisitService {
         Landmark landmark = landmarkRepository.findById(request.getLandmarkId())
                 .orElseThrow(() -> new EntityNotFoundException("Landmark not found with id: " + request.getLandmarkId()));
 
-        // Disable during development TODO: Re-enable
+        // Validation //TODO: REenable
         validateVisitIsNotDuplicate(student.getId(), landmark.getId());
-        // validateVisitIsNearLandmark(request.getCoordinates(), landmark.getCoordinates());
+        //validateVisitIsNearLandmark(request.getCoordinates(), landmark.getCoordinates());
 
         LandmarkVisit visit = new LandmarkVisit();
         visit.setUser(student);
